@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './src/users/infrastructure/auth.routes';
+import userRoutes from './src/users/infrastructure/user.routes';
 
 const app = express();
 
@@ -14,6 +15,8 @@ app.use(cors({
 // Montar rutas
 // Grita su arquitectura: Todas las rutas de auth bajo /api/auth
 app.use('/api/auth', authRoutes);
+// Rutas de usuarios bajo /api/users
+app.use('/api/users', userRoutes);
 
 // Ruta de prueba
 app.get('/api/health', (req, res) => {
