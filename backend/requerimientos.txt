@@ -1,0 +1,10 @@
+npm init -y
+npm install express mysql2 cors dotenv nodemon
+npm install --save-dev nodemon
+npm install bcryptjs jsonwebtoken
+npm install --save-dev knex
+
+npm install -D @types/express @types/cors @types/bcryptjs @types/jsonwebtoken
+npm install -D typescript @types/node ts-node
+npm install knex
+npx tsc --init
