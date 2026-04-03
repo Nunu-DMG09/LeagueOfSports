@@ -32,4 +32,8 @@ export class KnexTeamRepository implements TeamRepository {
     const member = await db('equipo_miembros').where({ id_usuario: userId }).first();
     return !!member; 
   }
+
+  async findAll(): Promise<any[]> {
+    return await db('equipos').orderBy('fecha_creacion', 'desc');
+  }
 }
