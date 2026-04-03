@@ -27,4 +27,21 @@ export class KnexMatchRepository implements MatchRepository {
       .first();
     return !!result;
   }
+
+  async getGlobalRanking(): Promise<any[]> {
+    return await db('usuarios as u')
+      .leftJoin('estadisticas_partida as ep', 'u.id_usuario', 'ep.id_usuario')
+      .select(
+        'u.id_usuario',
+        'u.nickname',
+        'u.elo',
+        db.raw('SUM(COALESCE(ep.kills, 0)) as total_kills'),
+        db.raw('SUM(COALESCE(ep.deaths, 0)) as total_deaths'),
+        db.raw('SUM(COALESCE(ep.assists, 0)) as total_assists'),
+        'u.puntos_totales'
+      )
+      .groupBy('u.id_usuario')
+      .orderBy('u.puntos_totales', 'desc')
+      .limit(10); // Top 10 para el Salón de la Fama
+  }
 }
