@@ -15,6 +15,10 @@ import TournamentCreateView from '../features/tournaments/components/TournamentC
 import TournamentDetailView from '../features/tournaments/components/TournamentDetailView';
 import HallOfFameView from '../features/hallOfFame/components/HallOfFameView';
 
+import MatchManageView from '../features/matches/components/MatchManageView';
+
+import RewardsView from '../features/rewards/components/RewardsView';
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -51,6 +55,8 @@ export const router = createBrowserRouter([
       { path: 'tournaments/new', element: <TournamentCreateView /> },
       { path: 'tournaments/:id', element: <TournamentDetailView /> },
       { path: 'hall-of-fame', element: <HallOfFameView /> },
+      { path: 'matches/:id/manage', element: <MatchManageView /> },
+      { path: 'rewards', element: <RewardsView /> },
       
     ],
   },
