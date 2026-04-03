@@ -1,0 +1,4 @@
+npm create vite@latest frontend -- --template react-ts
+npm install react-router-dom axios
+
+New-Item -ItemType Directory -Force -Path src/app, src/shared/components, src/shared/hooks, src/shared/types, src/features/auth/components, src/features/auth/hooks, src/features/auth/services, src/features/auth/types, src/features/dashboard/components, src/features/dashboard/services, src/features/hallOfFame/components, src/features/hallOfFame/services, src/features/tournaments/components, src/features/tournaments/services, src/features/teams/components, src/features/teams/services
