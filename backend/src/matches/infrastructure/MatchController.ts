@@ -40,4 +40,25 @@ export class MatchController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  async getByTournament(req: Request, res: Response) {
+    try {
+      const { id_torneo } = req.params;
+      const matches = await (this.createMatchUseCase['repository'] as any).findByTournament(Number(id_torneo));
+      res.json(matches);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getById(req: Request, res: Response) {
+    try {
+      const { id_partida } = req.params;
+      const match = await (this.createMatchUseCase['repository'] as any).findById(Number(id_partida));
+      if (!match) return res.status(404).json({ error: 'Partida no encontrada' });
+      res.json(match);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
