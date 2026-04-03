@@ -9,7 +9,8 @@ import {
   ChevronDown,
   ChevronRight,
   LogOut,
-  Menu
+  Menu,
+  Gift
 } from 'lucide-react';
 
 export default function AppLayout() {
@@ -42,6 +43,9 @@ export default function AppLayout() {
         { name: 'Ver invocadores', path: '/users' },
         { name: 'Salón de la Fama', path: '/hall-of-fame' }
       ]
+    },
+    { 
+      name: 'Tienda de Puntos', icon: Gift, path: '/rewards' 
     },
   ];
 
