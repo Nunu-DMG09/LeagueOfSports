@@ -13,6 +13,8 @@ const controller = new TeamController(
   repo
 );
 
+router.get('/', controller.getAll.bind(controller));
+router.get('/:id_equipo', controller.getById.bind(controller));
 router.post('/', controller.create.bind(controller));
 router.post('/:id_equipo/members', controller.addMember.bind(controller));
 router.get('/:id_equipo/members', controller.getMembers.bind(controller));
