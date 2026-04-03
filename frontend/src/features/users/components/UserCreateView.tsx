@@ -1,0 +1,93 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { userService } from '../services/user.service';
+import { ArrowLeft } from 'lucide-react';
+
+export default function UserCreateView() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    id_rol: 1, nickname: '', elo: 'Unranked', password: '', confirmPassword: ''
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      return toast.error('Las contraseñas no coinciden');
+    }
+
+    try {
+      await userService.create({
+        id_rol: Number(formData.id_rol),
+        nickname: formData.nickname,
+        elo: formData.elo,
+        password: formData.password
+      });
+      toast.success('Invocador registrado exitosamente');
+      navigate('/users');
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Error al registrar invocador');
+    }
+  };
+
+  return (
+    <div className="mx-auto max-w-3xl space-y-6">
+      <div className="flex items-center gap-4">
+        <button onClick={() => navigate('/users')} className="text-gray-400 hover:text-white">
+          <ArrowLeft size={24} />
+        </button>
+        <h1 className="text-2xl font-bold text-white">Registrar Nuevo Invocador</h1>
+      </div>
+
+      <div className="rounded-lg border border-ls-gold/20 bg-ls-surface p-8 shadow-lg">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-sm text-gray-400">Nickname</label>
+              <input type="text" required className="w-full rounded border border-gray-700 bg-ls-bg p-3 text-white focus:border-ls-primary focus:outline-none"
+                value={formData.nickname} onChange={e => setFormData({...formData, nickname: e.target.value})} />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-gray-400">Rol del Sistema</label>
+              <select className="w-full rounded border border-gray-700 bg-ls-bg p-3 text-white focus:border-ls-primary focus:outline-none"
+                value={formData.id_rol} onChange={e => setFormData({...formData, id_rol: Number(e.target.value)})}>
+                <option value={1}>Usuario</option>
+                <option value={2}>Administrador</option>
+                <option value={3}>Super Admin</option>
+              </select>
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="mb-1 block text-sm text-gray-400">Liga (Elo) Inicial</label>
+              <select className="w-full rounded border border-gray-700 bg-ls-bg p-3 text-white focus:border-ls-primary focus:outline-none"
+                value={formData.elo} onChange={e => setFormData({...formData, elo: e.target.value})}>
+                {['Unranked','Hierro','Bronce','Plata','Oro','Platino','Esmeralda','Diamante','Master','Gran Master','Challenger'].map(elo => (
+                  <option key={elo} value={elo}>{elo}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-gray-400">Contraseña</label>
+              <input type="password" required className="w-full rounded border border-gray-700 bg-ls-bg p-3 text-white focus:border-ls-primary focus:outline-none"
+                value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-gray-400">Confirmar Contraseña</label>
+              <input type="password" required className="w-full rounded border border-gray-700 bg-ls-bg p-3 text-white focus:border-ls-primary focus:outline-none"
+                value={formData.confirmPassword} onChange={e => setFormData({...formData, confirmPassword: e.target.value})} />
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-4 border-t border-gray-800">
+            <button type="submit" className="rounded bg-ls-primary px-8 py-3 font-bold text-ls-bg transition hover:bg-ls-primary-hover">
+              Crear Invocador
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
