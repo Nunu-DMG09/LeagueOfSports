@@ -22,4 +22,11 @@ export class KnexUserRepository implements UserRepository {
   async delete(id: number): Promise<void> {
     await db('usuarios').where({ id_usuario: id }).delete();
   }
+
+  async findAll(): Promise<any[]> {
+    // Traemos los usuarios sin la contraseña por seguridad
+    return await db('usuarios')
+      .select('id_usuario', 'nickname', 'elo', 'puntos_totales', 'estado', 'fecha_registro')
+      .orderBy('puntos_totales', 'desc');
+  }
 }
