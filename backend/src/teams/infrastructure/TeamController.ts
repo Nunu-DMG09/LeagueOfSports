@@ -39,4 +39,24 @@ export class TeamController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  async getAll(req: Request, res: Response) {
+    try {
+      const teams = await this.repository.findAll();
+      res.json(teams);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getById(req: Request, res: Response) {
+    try {
+      const { id_equipo } = req.params;
+      const team = await this.repository.findById(Number(id_equipo));
+      if (!team) return res.status(404).json({ error: 'Equipo no encontrado' });
+      res.json(team);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
