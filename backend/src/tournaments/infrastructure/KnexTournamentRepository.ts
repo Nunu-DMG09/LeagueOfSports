@@ -22,4 +22,15 @@ export class KnexTournamentRepository implements TournamentRepository {
       .first();
     return !!registry;
   }
+
+  async findAll(): Promise<any[]> {
+    return await db('torneos').orderBy('fecha_inicio', 'desc');
+  }
+
+  async getTeamsInTournament(idTorneo: number): Promise<any[]> {
+    return await db('torneo_equipos')
+      .join('equipos', 'torneo_equipos.id_equipo', 'equipos.id_equipo')
+      .select('equipos.id_equipo', 'equipos.nombre', 'equipos.logo_url', 'torneo_equipos.estado_inscripcion')
+      .where('torneo_equipos.id_torneo', idTorneo);
+  }
 }
