@@ -44,4 +44,28 @@ export class KnexMatchRepository implements MatchRepository {
       .orderBy('u.puntos_totales', 'desc')
       .limit(10); // Top 10 para el Salón de la Fama
   }
+
+  async findByTournament(tournamentId: number): Promise<any[]> {
+    return await db('partidas as p')
+      .join('equipos as ea', 'p.id_equipo_azul', 'ea.id_equipo')
+      .join('equipos as er', 'p.id_equipo_rojo', 'er.id_equipo')
+      .leftJoin('equipos as eg', 'p.id_equipo_ganador', 'eg.id_equipo')
+      .select(
+        'p.*',
+        'ea.nombre as equipo_azul_nombre',
+        'er.nombre as equipo_rojo_nombre',
+        'eg.nombre as equipo_ganador_nombre'
+      )
+      .where('p.id_torneo', tournamentId)
+      .orderBy('p.fecha_partida', 'desc');
+  }
+
+  async findById(matchId: number): Promise<any> {
+    return await db('partidas as p')
+      .join('equipos as ea', 'p.id_equipo_azul', 'ea.id_equipo')
+      .join('equipos as er', 'p.id_equipo_rojo', 'er.id_equipo')
+      .select('p.*', 'ea.nombre as equipo_azul_nombre', 'er.nombre as equipo_rojo_nombre')
+      .where('p.id_partida', matchId)
+      .first();
+  }
 }
