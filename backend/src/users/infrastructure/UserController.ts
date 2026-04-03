@@ -38,4 +38,15 @@ export class UserController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  async getAll(req: Request, res: Response) {
+    try {
+      // Como es simple, usamos el repositorio directamente para no hacer un Caso de Uso redundante
+      const users = await this.registerUseCase['userRepository'].findAll();
+      res.json(users);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+  
 }
