@@ -27,4 +27,37 @@ export class TournamentController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  async getAll(req: Request, res: Response) {
+    try {
+      const tournaments = await this.registerTeamUseCase['repository'].findAll();
+      res.json(tournaments);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getById(req: Request, res: Response) {
+    try {
+      const { id_torneo } = req.params;
+      const tournament = await this.registerTeamUseCase['repository'].findById(Number(id_torneo));
+      if (!tournament) return res.status(404).json({ error: 'Torneo no encontrado' });
+      res.json(tournament);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getTeams(req: Request, res: Response) {
+    try {
+      const { id_torneo } = req.params;
+      // Usamos el método getTeamsInTournament que creamos en el repositorio anteriormente
+      const teams = await (this.registerTeamUseCase['repository'] as any).getTeamsInTournament(Number(id_torneo));
+      res.json(teams);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  
 }
