@@ -1,0 +1,43 @@
+import { Request, Response } from 'express';
+import { CreateMatchUseCase } from '../application/CreateMatchUseCase';
+import { FinishMatchUseCase } from '../application/FinishMatchUseCase';
+import { RegisterPlayerStatsUseCase } from '../application/RegisterPlayerStatsUseCase';
+
+export class MatchController {
+  constructor(
+    private createMatchUseCase: CreateMatchUseCase,
+    private finishMatchUseCase: FinishMatchUseCase,
+    private registerStatsUseCase: RegisterPlayerStatsUseCase
+  ) {}
+
+  async create(req: Request, res: Response) {
+    try {
+      const id = await this.createMatchUseCase.execute(req.body);
+      res.status(201).json({ message: 'Partida registrada', id_partida: id });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async finish(req: Request, res: Response) {
+    try {
+      const { id_partida } = req.params;
+      const { id_equipo_ganador, duracion_minutos } = req.body;
+      await this.finishMatchUseCase.execute(Number(id_partida), id_equipo_ganador, duracion_minutos);
+      res.json({ message: 'Resultado de la partida actualizado' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async registerStats(req: Request, res: Response) {
+    try {
+      const { id_partida } = req.params;
+      const statsData = { ...req.body, id_partida: Number(id_partida) };
+      await this.registerStatsUseCase.execute(statsData);
+      res.status(201).json({ message: 'Estadísticas del jugador registradas exitosamente' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+}
