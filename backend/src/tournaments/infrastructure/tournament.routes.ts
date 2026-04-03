@@ -12,6 +12,9 @@ const controller = new TournamentController(
   new RegisterTeamUseCase(repo)
 );
 
+router.get('/', controller.getAll.bind(controller));
+router.get('/:id_torneo', controller.getById.bind(controller));
+router.get('/:id_torneo/teams', controller.getTeams.bind(controller)); 
 router.post('/', controller.create.bind(controller));
 router.post('/:id_torneo/register-team', controller.registerTeam.bind(controller));
 
