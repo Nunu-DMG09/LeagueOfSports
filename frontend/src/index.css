@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  /* Paleta League of Sports */
+  --color-ls-bg: #0a0a0c;        /* Fondo principal oscuro (Void) */
+  --color-ls-surface: #1e2328;   /* Fondo para tarjetas/paneles */
+  --color-ls-primary: #0bc6e3;   /* Celeste Hextech brillante */
+  --color-ls-primary-hover: #09a1b8; 
+  --color-ls-gold: #c8aa6e;      /* Dorado victorioso/Challenger */
+  --color-ls-gold-hover: #a38a58;
+  --color-ls-danger: #e23636;    /* Rojo para derrotas/errores */
+  --color-ls-success: #12b279;   /* Verde para victorias */
+}
+
+/* Estilos globales básicos */
+body {
+  background-color: var(--color-ls-bg);
+  color: white;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
