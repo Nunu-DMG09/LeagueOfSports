@@ -14,10 +14,13 @@ const controller = new MatchController(
   new RegisterPlayerStatsUseCase(repo)
 );
 
+// ¡LA NUEVA RUTA BLINDADA!
+router.get('/stats/ranking', controller.getRanking.bind(controller));
+
 router.get('/tournament/:id_torneo', controller.getByTournament.bind(controller));
 router.get('/:id_partida', controller.getById.bind(controller));
-router.post('/', controller.create.bind(controller));
 router.put('/:id_partida/finish', controller.finish.bind(controller));
 router.post('/:id_partida/stats', controller.registerStats.bind(controller));
+router.post('/', controller.create.bind(controller));
 
 export default router;
