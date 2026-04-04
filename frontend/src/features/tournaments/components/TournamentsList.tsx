@@ -1,27 +1,10 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trophy, Calendar, Users, ChevronRight } from 'lucide-react';
-import { toast } from 'sonner';
-import { tournamentService } from '../services/tournament.service';
+import { useTournaments } from '../hooks/useTournaments';
 
 export default function TournamentsList() {
-  const [tournaments, setTournaments] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchTournaments = async () => {
-      try {
-        const data = await tournamentService.getAll();
-        setTournaments(data);
-      } catch (error) {
-        toast.error('Error al cargar la lista de torneos');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTournaments();
-  }, []);
+  const { tournaments, loading, canManageTournaments } = useTournaments();
 
   const statusStyles: any = {
     'pendiente': 'bg-ls-gold/10 text-ls-gold border-ls-gold/20',
@@ -36,12 +19,15 @@ export default function TournamentsList() {
           <h1 className="text-2xl font-bold text-white uppercase tracking-tight">Torneos Activos</h1>
           <p className="text-sm text-gray-400">Gestiona las competencias y enfrentamientos de la liga.</p>
         </div>
-        <button 
-          onClick={() => navigate('/tournaments/new')}
-          className="rounded bg-ls-gold px-4 py-2 text-sm font-bold text-ls-bg transition hover:bg-ls-gold-hover"
-        >
-          + Crear Competencia
-        </button>
+        {/* Solo Admins y SuperAdmins pueden ver este botón */}
+        {canManageTournaments && (
+          <button 
+            onClick={() => navigate('/tournaments/new')}
+            className="rounded bg-ls-gold px-4 py-2 text-sm font-bold text-ls-bg transition hover:bg-ls-gold-hover"
+          >
+            + Crear Competencia
+          </button>
+        )}
       </div>
 
       {loading ? (
