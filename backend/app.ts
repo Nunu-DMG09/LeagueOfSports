@@ -7,6 +7,7 @@ import tournamentRoutes from './src/tournaments/infrastructure/tournament.routes
 import matchRoutes from './src/matches/infrastructure/match.routes';
 
 import rewardRoutes from './src/rewards/infrastructure/reward.routes';
+import dashboardRoutes from './src/dashboard/infrastructure/dashboard.routes';
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/api/teams', teamRoutes);
 app.use('/api/tournaments', tournamentRoutes);
 app.use('/api/matches', matchRoutes);
 app.use('/api/rewards', rewardRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 // Ruta de prueba
 app.get('/api/health', (req, res) => {
   res.json({ status: 'League of Sports API is running' });
