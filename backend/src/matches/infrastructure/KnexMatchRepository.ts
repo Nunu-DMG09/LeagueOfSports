@@ -42,7 +42,7 @@ export class KnexMatchRepository implements MatchRepository {
       )
       .groupBy('u.id_usuario')
       .orderBy('u.puntos_totales', 'desc')
-      .limit(10); // Top 10 para el Salón de la Fama
+      .limit(10);
   }
 
   async findByTournament(tournamentId: number): Promise<any[]> {
