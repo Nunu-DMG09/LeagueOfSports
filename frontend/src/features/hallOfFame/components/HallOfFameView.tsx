@@ -1,17 +1,30 @@
 import { useEffect, useState } from 'react';
 import { Trophy, Star, Medal } from 'lucide-react';
 import { api } from '../../../shared/services/api';
+import { toast } from 'sonner';
 
 export default function HallOfFameView() {
   const [ranking, setRanking] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchRanking = async () => {
-      const { data } = await api.get('/matches/ranking'); // Ajusta según tu ruta backend
-      setRanking(data);
+      try {
+        const { data } = await api.get('/matches/stats/ranking');
+        setRanking(data);
+      } catch (error) {
+        console.error(error);
+        toast.error('Error al cargar el Salón de la Fama');
+      } finally {
+        setLoading(false);
+      }
     };
     fetchRanking();
   }, []);
+
+  if (loading) {
+    return <div className="text-center py-20 text-ls-gold animate-pulse text-xl">Recopilando leyendas...</div>;
+  }
 
   return (
     <div className="space-y-8">
