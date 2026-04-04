@@ -3,23 +3,20 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { 
   LayoutDashboard, Trophy, Users, Shield, ChevronDown, ChevronRight, 
-  LogOut, Menu, Gift, ChevronLeft, Sun, Moon, UserCircle, Settings
+  LogOut, Menu, Gift, ChevronLeft, Sun, Moon, Settings
 } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function AppLayout() {
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
   
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (userStr) setCurrentUser(JSON.parse(userStr));
-  }, []);
+  const { user: currentUser, canManageTournaments, canManageTeams } = useAuth();
 
   const toggleMenu = (menu: string) => setOpenMenus(prev => ({ ...prev, [menu]: !prev[menu] }));
   
@@ -31,7 +28,6 @@ export default function AppLayout() {
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
-    // Aquí podrías inyectar una clase 'light' al tag <html> si configuras los colores en CSS
     document.documentElement.classList.toggle('light-theme');
   };
 
@@ -39,15 +35,25 @@ export default function AppLayout() {
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { 
       name: 'Torneos', icon: Trophy, 
-      subItems: [{ name: 'Ver Torneos', path: '/tournaments' }, { name: 'Crear Torneo', path: '/tournaments/new' }]
+      subItems: [
+        { name: 'Ver Torneos', path: '/tournaments' },
+        ...(canManageTournaments ? [{ name: 'Crear Torneo', path: '/tournaments/new' }] : [])
+      ]
     },
     { 
       name: 'Equipos', icon: Shield, 
-      subItems: [{ name: 'Lista de Equipos', path: '/teams' }, { name: 'Registrar Equipo', path: '/teams/new' }]
+      subItems: [
+        { name: 'Lista de Equipos', path: '/teams' },
+        
+        ...(canManageTeams ? [{ name: 'Registrar Equipo', path: '/teams/new' }] : [])
+      ]
     },
     { 
       name: 'Invocadores', icon: Users, 
-      subItems: [{ name: 'Ver invocadores', path: '/users' }, { name: 'Salón de la Fama', path: '/hall-of-fame' }]
+      subItems: [
+        { name: 'Invocadores', path: '/users' },
+        { name: 'Salón de la Fama', path: '/hall-of-fame' }
+      ]
     },
     { name: 'Tienda de Puntos', icon: Gift, path: '/rewards' },
   ];
@@ -121,7 +127,7 @@ export default function AppLayout() {
       {/* MAIN CONTENT */}
       <main className="flex flex-1 flex-col overflow-hidden">
         {/* Top Header */}
-        <header className={`flex h-16 items-center justify-between border-b border-ls-gold/20 px-6 transition-colors ${isDarkMode ? 'bg-ls-surface' : 'bg-white shadow-sm'}`}>
+        <header className={`flex h-16 items-center justify-between border-b border-ls-gold/20 px-6 transition-colors z-20 ${isDarkMode ? 'bg-ls-surface' : 'bg-white shadow-sm'}`}>
           <div className="flex items-center gap-4">
             <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="lg:hidden text-gray-400 hover:text-ls-primary">
               <Menu size={24} />
@@ -132,12 +138,10 @@ export default function AppLayout() {
           </div>
           
           <div className="flex items-center gap-5">
-            {/* Theme Toggle */}
             <button onClick={toggleTheme} className="text-gray-400 hover:text-ls-gold transition-colors">
               {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
             </button>
 
-            {/* Profile Dropdown */}
             <div className="relative">
               <button 
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
