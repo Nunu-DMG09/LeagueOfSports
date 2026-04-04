@@ -1,46 +1,24 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield } from 'lucide-react';
-import { toast } from 'sonner';
-import { teamService } from '../services/team.service';
-
-interface Team {
-  id_equipo: number;
-  nombre: string;
-  logo_url: string;
-  estado: string;
-  fecha_creacion: string;
-}
+import { useTeams } from '../hooks/useTeams';
 
 export default function TeamsList() {
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchTeams = async () => {
-      try {
-        const data = await teamService.getAll();
-        setTeams(data);
-      } catch (error) {
-        toast.error('Error al cargar los equipos');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTeams();
-  }, []);
+  const { teams, loading, canManageTeams } = useTeams();
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white">Equipos Competitivos</h1>
-        <button 
-          onClick={() => navigate('/teams/new')}
-          className="rounded bg-ls-primary px-4 py-2 text-sm font-bold text-ls-bg transition hover:bg-ls-primary-hover"
-        >
-          + Fundar Equipo
-        </button>
+        {/* Validamos el permiso para ocultar el botón */}
+        {canManageTeams && (
+          <button 
+            onClick={() => navigate('/teams/new')}
+            className="rounded bg-ls-primary px-4 py-2 text-sm font-bold text-ls-bg transition hover:bg-ls-primary-hover"
+          >
+            + Fundar Equipo
+          </button>
+        )}
       </div>
 
       {loading ? (
