@@ -1,64 +1,17 @@
-import { useEffect, useState } from 'react';
 import { Gift, Star, PlusCircle, AlertCircle } from 'lucide-react';
-import { toast } from 'sonner';
-import { rewardService } from '../services/reward.service';
+import { useRewards } from '../hooks/useRewards';
 
 export default function RewardsView() {
-  const [rewards, setRewards] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-
-  // Formulario rápido de administrador
-  const [newReward, setNewReward] = useState({ nombre_recompensa: '', descripcion: '', costo_puntos: 100, stock: 10 });
-
-  const loadRewards = async () => {
-    try {
-      const data = await rewardService.getAll();
-      setRewards(data);
-    } catch (error) {
-      toast.error('Error al cargar la tienda');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadRewards();
-    // Obtener usuario actual del localStorage (lo guardamos en el login)
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) setCurrentUser(JSON.parse(storedUser));
-  }, []);
-
-  const handleCreateReward = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await rewardService.create(newReward);
-      toast.success('Nueva recompensa añadida a la tienda');
-      setNewReward({ nombre_recompensa: '', descripcion: '', costo_puntos: 100, stock: 10 });
-      loadRewards();
-    } catch (error) {
-      toast.error('Error al crear recompensa');
-    }
-  };
-
-  const handleRedeem = async (rewardId: number, rewardName: string) => {
-    if (!currentUser) return toast.error('Sesión no encontrada');
-    if (!window.confirm(`¿Quieres canjear ${rewardName}?`)) return;
-
-    try {
-      await rewardService.redeem(rewardId, currentUser.id_usuario);
-      toast.success(`¡Disfruta tu premio: ${rewardName}!`);
-      loadRewards();
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'No se pudo canjear');
-    }
-  };
+  const { 
+    rewards, loading, currentUser, canManageRewards, 
+    newReward, setNewReward, handleCreateReward, handleRedeem 
+  } = useRewards();
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row items-center justify-between border-b border-ls-gold/20 pb-4">
         <div>
-          <h1 className="text-3xl font-black italic tracking-tighter text-ls-gold uppercase">Tienda de Puntos</h1>
+          <h1 className="text-3xl font-black italic tracking-tighter text-ls-gold uppercase">Tienda Hextech</h1>
           <p className="text-sm text-gray-400">Canjea tus puntos competitivos por premios exclusivos.</p>
         </div>
         {currentUser && (
@@ -73,12 +26,14 @@ export default function RewardsView() {
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         
-        {/* CATÁLOGO DE PREMIOS */}
-        <div className="xl:col-span-2">
+        {/* CATÁLOGO DE PREMIOS (Ocupa todo el ancho si es un usuario normal) */}
+        <div className={canManageRewards ? "xl:col-span-2" : "xl:col-span-3"}>
           {loading ? (
-            <div className="text-center py-10 animate-pulse text-ls-primary">Abriendo la bóveda...</div>
+            <div className="text-center py-10 animate-pulse text-ls-primary font-bold">Abriendo la bóveda...</div>
+          ) : rewards.length === 0 ? (
+            <div className="text-center py-10 text-gray-500 italic border border-gray-800 rounded-xl bg-ls-surface">La tienda está vacía por ahora.</div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className={`grid grid-cols-1 sm:grid-cols-2 gap-6 ${!canManageRewards && 'md:grid-cols-3'}`}>
               {rewards.map(r => (
                 <div key={r.id_recompensa} className="relative overflow-hidden rounded-xl border border-ls-gold/20 bg-ls-surface p-1 transition hover:border-ls-primary hover:shadow-[0_0_15px_rgba(11,198,227,0.2)]">
                   <div className="h-32 bg-gradient-to-tr from-gray-900 to-gray-800 flex items-center justify-center rounded-t-lg">
@@ -105,14 +60,14 @@ export default function RewardsView() {
 
                     <button 
                       onClick={() => handleRedeem(r.id_recompensa, r.nombre_recompensa)}
-                      disabled={r.stock <= 0}
+                      disabled={r.stock <= 0 || currentUser?.puntos_totales < r.costo_puntos}
                       className={`w-full mt-4 py-2 rounded font-bold transition-all ${
-                        r.stock > 0 
+                        r.stock > 0 && currentUser?.puntos_totales >= r.costo_puntos
                           ? 'bg-ls-primary text-ls-bg hover:bg-ls-primary-hover' 
                           : 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
                       }`}
                     >
-                      {r.stock > 0 ? 'Canjear Premio' : 'Sin Existencias'}
+                      {r.stock <= 0 ? 'Sin Existencias' : currentUser?.puntos_totales < r.costo_puntos ? 'Puntos Insuficientes' : 'Canjear Premio'}
                     </button>
                   </div>
                 </div>
@@ -121,9 +76,9 @@ export default function RewardsView() {
           )}
         </div>
 
-        {/* PANEL ADMINISTRADOR: CREAR PREMIO */}
-        {currentUser?.id_rol !== 1 && (
-          <div className="rounded-xl border border-dashed border-ls-gold/50 bg-ls-surface p-6 h-fit">
+        {/* PANEL ADMINISTRADOR: CREAR PREMIO (Solo Admin / SuperAdmin) */}
+        {canManageRewards && (
+          <div className="rounded-xl border border-dashed border-ls-gold/50 bg-ls-surface p-6 h-fit shadow-xl">
             <h3 className="font-bold text-ls-gold flex items-center gap-2 mb-6">
               <PlusCircle size={20} /> Inventario Admin
             </h3>
@@ -150,13 +105,13 @@ export default function RewardsView() {
                     value={newReward.stock} onChange={e => setNewReward({...newReward, stock: Number(e.target.value)})} />
                 </div>
               </div>
-              <button type="submit" className="w-full bg-ls-gold text-ls-bg font-bold py-2 rounded hover:bg-ls-gold-hover transition mt-2">
+              <button type="submit" className="w-full bg-ls-gold text-ls-bg font-bold py-2 rounded hover:bg-ls-gold-hover transition mt-2 shadow-[0_0_10px_rgba(200,170,110,0.3)]">
                 Generar en Tienda
               </button>
             </form>
             <div className="mt-4 flex items-start gap-2 p-3 bg-gray-900 rounded border border-gray-800 text-xs text-gray-400">
               <AlertCircle size={14} className="text-ls-primary mt-0.5 shrink-0" />
-              <p>Solo los administradores pueden añadir premios. El canje es automático y restará puntos de la base de datos.</p>
+              <p>Los usuarios verán este premio inmediatamente. El canje y resta de stock es automático.</p>
             </div>
           </div>
         )}
