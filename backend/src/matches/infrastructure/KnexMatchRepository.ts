@@ -9,12 +9,49 @@ export class KnexMatchRepository implements MatchRepository {
   }
 
   async updateMatchResult(matchId: number, winnerTeamId: number, duration: number): Promise<void> {
-    await db('partidas')
-      .where({ id_partida: matchId })
-      .update({
-        id_equipo_ganador: winnerTeamId,
-        duracion_minutos: duration
-      });
+
+    await db.transaction(async (trx) => {
+      // 1. Guardar el resultado de la partida
+      await trx('partidas')
+        .where({ id_partida: matchId })
+        .update({
+          id_equipo_ganador: winnerTeamId,
+          duracion_minutos: duration
+        });
+
+      const match = await trx('partidas').where({ id_partida: matchId }).first();
+      if (!match) throw new Error('Partida no encontrada durante la asignación de puntos');
+
+      const blueTeamMembers = await trx('equipo_miembros').where({ id_equipo: match.id_equipo_azul });
+      const redTeamMembers = await trx('equipo_miembros').where({ id_equipo: match.id_equipo_rojo });
+
+      const blueIds = blueTeamMembers.map(m => m.id_usuario);
+      const redIds = redTeamMembers.map(m => m.id_usuario);
+
+      let ganadores: number[] = [];
+      let perdedores: number[] = [];
+
+      if (winnerTeamId === match.id_equipo_azul) {
+        ganadores = blueIds;
+        perdedores = redIds;
+      } else if (winnerTeamId === match.id_equipo_rojo) {
+        ganadores = redIds;
+        perdedores = blueIds;
+      }
+
+    
+      if (ganadores.length > 0) {
+        await trx('usuarios')
+          .whereIn('id_usuario', ganadores)
+          .increment('puntos_totales', 2);
+      }
+
+      if (perdedores.length > 0) {
+        await trx('usuarios')
+          .whereIn('id_usuario', perdedores)
+          .decrement('puntos_totales', 3);
+      }
+    });
   }
 
   async savePlayerStats(stats: PlayerStats): Promise<void> {
