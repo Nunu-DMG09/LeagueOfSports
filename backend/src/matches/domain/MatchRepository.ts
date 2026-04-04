@@ -5,4 +5,8 @@ export interface MatchRepository {
   updateMatchResult(matchId: number, winnerTeamId: number, duration: number): Promise<void>;
   savePlayerStats(stats: PlayerStats): Promise<void>;
   hasPlayerStatsInMatch(matchId: number, userId: number): Promise<boolean>;
+  
+  getGlobalRanking(): Promise<any[]>;
+  findByTournament(tournamentId: number): Promise<any[]>;
+  findById(matchId: number): Promise<any>;
 }
