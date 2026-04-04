@@ -18,6 +18,7 @@ import HallOfFameView from '../features/hallOfFame/components/HallOfFameView';
 import MatchManageView from '../features/matches/components/MatchManageView';
 
 import RewardsView from '../features/rewards/components/RewardsView';
+import RequirePermission from '../shared/components/RequirePermission';
 
 export const router = createBrowserRouter([
   {
@@ -28,35 +29,35 @@ export const router = createBrowserRouter([
     path: '/',
     element: <AppLayout />, 
     children: [
-      {
-        path: 'dashboard',
-        element: <DashboardView />,
-      },
-      {
-        path: 'users', 
-        element: <UsersList />,
-      },
-      { path: 'users/new',
-        element: <UserCreateView /> 
-      },
-
-      { path: 'teams',
-        element: <TeamsList />
-      }, 
-      { path: 'teams/new',
-        element: <TeamCreateView />
-      },
-      {
-        path: 'teams/:id', 
-        element: <TeamDetailView />,
-      },
-
+      // === RUTAS PÚBLICAS (Todos los roles pueden ver) ===
+      { path: 'dashboard', element: <DashboardView /> },
       { path: 'tournaments', element: <TournamentsList /> },
-      { path: 'tournaments/new', element: <TournamentCreateView /> },
       { path: 'tournaments/:id', element: <TournamentDetailView /> },
+      { path: 'teams', element: <TeamsList /> },
+      { path: 'teams/:id', element: <TeamDetailView /> },
+      { path: 'users', element: <UsersList /> },
       { path: 'hall-of-fame', element: <HallOfFameView /> },
-      { path: 'matches/:id/manage', element: <MatchManageView /> },
       { path: 'rewards', element: <RewardsView /> },
+
+      // === RUTAS PROTEGIDAS (Admins y SuperAdmins) ===
+      { 
+        path: 'tournaments/new', 
+        element: <RequirePermission permission="tournaments"><TournamentCreateView /></RequirePermission> 
+      },
+      { 
+        path: 'matches/:id/manage', 
+        element: <RequirePermission permission="tournaments"><MatchManageView /></RequirePermission> 
+      },
+      { 
+        path: 'teams/new', 
+        element: <RequirePermission permission="teams"><TeamCreateView /></RequirePermission> 
+      },
+
+      // === RUTA SÚPER PROTEGIDA (Solo SuperAdmins) ===
+      { 
+        path: 'users/new', 
+        element: <RequirePermission permission="users"><UserCreateView /></RequirePermission> 
+      },
       
     ],
   },
