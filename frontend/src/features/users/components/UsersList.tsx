@@ -1,52 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Edit, Trash2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { userService } from '../services/user.service';
+import { Edit, Trash2, ShieldAlert } from 'lucide-react';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import UserEditModal from './UserEditModal';
-
-interface User {
-  id_usuario: number;
-  nickname: string;
-  elo: string;
-  puntos_totales: number;
-  estado: string;
-}
+import { useUsers } from '../hooks/useUsers'; 
 
 export default function UsersList() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  
+  const { users, loading, canManageUsers, fetchUsers, confirmDelete } = useUsers();
 
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, userId: 0, nickname: '' });
   const [editModal, setEditModal] = useState({ isOpen: false, user: null });
-
-  const fetchUsers = async () => {
-    try {
-      const data = await userService.getAll();
-      setUsers(data);
-    } catch (error) {
-      toast.error('Error al cargar los invocadores');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const confirmDelete = async () => {
-    try {
-      await userService.delete(deleteModal.userId);
-      toast.success(`Invocador ${deleteModal.nickname} eliminado de la grieta`);
-      setDeleteModal({ isOpen: false, userId: 0, nickname: '' });
-      fetchUsers();
-    } catch (error) {
-      toast.error('Error al eliminar invocador');
-    }
-  };
 
   const eloColors: Record<string, string> = {
     'Challenger': 'text-yellow-300', 'Gran Master': 'text-red-400', 'Master': 'text-purple-400',
@@ -59,12 +24,18 @@ export default function UsersList() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white">Directorio de Invocadores</h1>
-        <button 
-          onClick={() => navigate('/users/new')}
-          className="rounded bg-ls-primary px-4 py-2 text-sm font-bold text-ls-bg transition hover:bg-ls-primary-hover"
-        >
-          + Nuevo Invocador
-        </button>
+        {canManageUsers ? (
+          <button 
+            onClick={() => navigate('/users/new')}
+            className="rounded bg-ls-primary px-4 py-2 text-sm font-bold text-ls-bg transition hover:bg-ls-primary-hover"
+          >
+            + Nuevo Invocador
+          </button>
+        ) : (
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-900 border border-gray-700 rounded text-xs text-gray-400">
+            <ShieldAlert size={14} className="text-ls-gold" /> Solo Lectura
+          </div>
+        )}
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-ls-gold/20 bg-ls-surface shadow-lg">
@@ -75,12 +46,14 @@ export default function UsersList() {
               <th className="px-6 py-4">Liga (Elo)</th>
               <th className="px-6 py-4">Puntos</th>
               <th className="px-6 py-4">Estado</th>
-              <th className="px-6 py-4 text-center">Acciones</th>
+              {canManageUsers && <th className="px-6 py-4 text-center">Acciones</th>}
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={5} className="py-8 text-center">Cargando datos...</td></tr>
+              <tr><td colSpan={canManageUsers ? 5 : 4} className="py-8 text-center animate-pulse text-ls-primary">Cargando base de datos...</td></tr>
+            ) : users.length === 0 ? (
+              <tr><td colSpan={canManageUsers ? 5 : 4} className="py-8 text-center text-gray-500 italic">No hay invocadores registrados.</td></tr>
             ) : (
               users.map((user) => (
                 <tr key={user.id_usuario} className="border-b border-gray-800 transition hover:bg-ls-bg/30">
@@ -94,22 +67,27 @@ export default function UsersList() {
                       {user.estado.toUpperCase()}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-center">
-                    <div className="flex justify-center gap-3">
-                      <button 
-                        onClick={() => setEditModal({ isOpen: true, user: user as any })}
-                        className="text-gray-400 hover:text-ls-primary transition"
-                      >
-                        <Edit size={18} />
-                      </button>
-                      <button 
-                        onClick={() => setDeleteModal({ isOpen: true, userId: user.id_usuario, nickname: user.nickname })}
-                        className="text-gray-400 hover:text-ls-danger transition" 
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
+                  
+                  {/* BOTONES PROTEGIDOS */}
+                  {canManageUsers && (
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex justify-center gap-3">
+                        <button 
+                          onClick={() => setEditModal({ isOpen: true, user: user as any })}
+                          className="text-gray-400 hover:text-ls-primary transition"
+                        >
+                          <Edit size={18} />
+                        </button>
+                        <button 
+                          onClick={() => setDeleteModal({ isOpen: true, userId: user.id_usuario, nickname: user.nickname })}
+                          className="text-gray-400 hover:text-ls-danger transition" 
+                          disabled={user.id_rol === 3} // Evita que se elimine a otro SuperAdmin accidentalmente
+                        >
+                          <Trash2 size={18} className={user.id_rol === 3 ? "opacity-30 cursor-not-allowed" : ""} />
+                        </button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
@@ -123,7 +101,10 @@ export default function UsersList() {
         title="Eliminar Invocador"
         message={`¿Estás seguro de que deseas eliminar permanentemente a ${deleteModal.nickname}? Esta acción no se puede deshacer y borrará sus estadísticas.`}
         onCancel={() => setDeleteModal({ isOpen: false, userId: 0, nickname: '' })}
-        onConfirm={confirmDelete}
+        onConfirm={() => {
+          confirmDelete(deleteModal.userId, deleteModal.nickname);
+          setDeleteModal({ isOpen: false, userId: 0, nickname: '' });
+        }}
       />
 
       <UserEditModal 
