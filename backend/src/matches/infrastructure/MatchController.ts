@@ -44,19 +44,31 @@ export class MatchController {
   async getByTournament(req: Request, res: Response) {
     try {
       const { id_torneo } = req.params;
-      const matches = await (this.createMatchUseCase['repository'] as any).findByTournament(Number(id_torneo));
+      const matches = await (this.createMatchUseCase['repository']).findByTournament(Number(id_torneo));
       res.json(matches);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  async getById(req: Request, res: Response) {
+  async getById(req: Request, res: Response): Promise<any> {
     try {
       const { id_partida } = req.params;
-      const match = await (this.createMatchUseCase['repository'] as any).findById(Number(id_partida));
+      if (isNaN(Number(id_partida))) {
+         return res.status(400).json({ error: 'ID inválido' });
+      }
+      const match = await (this.createMatchUseCase['repository']).findById(Number(id_partida));
       if (!match) return res.status(404).json({ error: 'Partida no encontrada' });
       res.json(match);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getRanking(req: Request, res: Response) {
+    try {
+      const ranking = await (this.createMatchUseCase['repository']).getGlobalRanking();
+      res.json(ranking);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
