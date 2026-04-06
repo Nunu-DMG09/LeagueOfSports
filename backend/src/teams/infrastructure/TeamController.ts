@@ -2,12 +2,15 @@ import { Request, Response } from 'express';
 import { CreateTeamUseCase } from '../application/CreateTeamUseCase';
 import { AddTeamMemberUseCase } from '../application/AddTeamMemberUseCase';
 import { KnexTeamRepository } from './KnexTeamRepository';
+import { TeamRepository } from '../domain/TeamRepository';
+
+
 
 export class TeamController {
   constructor(
     private createTeamUseCase: CreateTeamUseCase,
     private addMemberUseCase: AddTeamMemberUseCase,
-    private repository: KnexTeamRepository // Lo inyectamos para un Get rápido
+    private teamRepository: TeamRepository 
   ) {}
 
   async create(req: Request, res: Response) {
@@ -33,7 +36,7 @@ export class TeamController {
   async getMembers(req: Request, res: Response) {
     try {
       const { id_equipo } = req.params;
-      const members = await this.repository.getMembersByTeam(Number(id_equipo));
+      const members = await this.teamRepository.getMembersByTeam(Number(id_equipo));
       res.json(members);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -42,7 +45,7 @@ export class TeamController {
 
   async getAll(req: Request, res: Response) {
     try {
-      const teams = await this.repository.findAll();
+      const teams = await this.teamRepository.findAll();
       res.json(teams);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -52,11 +55,25 @@ export class TeamController {
   async getById(req: Request, res: Response) {
     try {
       const { id_equipo } = req.params;
-      const team = await this.repository.findById(Number(id_equipo));
+      const team = await this.teamRepository.findById(Number(id_equipo));
       if (!team) return res.status(404).json({ error: 'Equipo no encontrado' });
       res.json(team);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
+    }
+  }
+
+  async removeMember(req: Request, res: Response) {
+    try {
+      const teamId = Number(req.params.id);
+      const userId = Number(req.params.userId);
+      
+      // Ahora TypeScript sí reconocerá this.teamRepository
+      await this.teamRepository.removeMember(teamId, userId);
+      
+      res.json({ message: 'Jugador expulsado del equipo exitosamente' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
     }
   }
 }
