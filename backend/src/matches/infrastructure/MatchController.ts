@@ -2,12 +2,14 @@ import { Request, Response } from 'express';
 import { CreateMatchUseCase } from '../application/CreateMatchUseCase';
 import { FinishMatchUseCase } from '../application/FinishMatchUseCase';
 import { RegisterPlayerStatsUseCase } from '../application/RegisterPlayerStatsUseCase';
+import { MatchRepository } from '../domain/MatchRepository';
 
 export class MatchController {
   constructor(
     private createMatchUseCase: CreateMatchUseCase,
     private finishMatchUseCase: FinishMatchUseCase,
-    private registerStatsUseCase: RegisterPlayerStatsUseCase
+    private registerStatsUseCase: RegisterPlayerStatsUseCase,
+    private matchRepository: MatchRepository
   ) {}
 
   async create(req: Request, res: Response) {
@@ -71,6 +73,16 @@ export class MatchController {
       res.json(ranking);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
+    }
+  }
+
+  async delete(req: Request, res: Response) {
+    try {
+      const matchId = Number(req.params.id);
+      await this.matchRepository.deleteMatch(matchId);
+      res.json({ message: 'Partida eliminada correctamente de la grieta' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
     }
   }
 }
