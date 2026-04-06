@@ -20,5 +20,9 @@ export const tournamentService = {
   registerTeam: async (idTorneo: number, teamId: number) => {
     const { data } = await api.post(`/tournaments/${idTorneo}/register-team`, { id_equipo: teamId });
     return data;
-  }
+  },
+  removeTeam: async (idTorneo: number, idEquipo: number) => {
+    const { data } = await api.delete(`/tournaments/${idTorneo}/teams/${idEquipo}`);
+    return data;
+  },
 };
