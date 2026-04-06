@@ -22,4 +22,9 @@ export const teamService = {
     const { data } = await api.get(`/teams/${id}`);
     return data;
   },
+
+  removeMember: async (idEquipo: number, idUsuario: number) => {
+    const { data } = await api.delete(`/teams/${idEquipo}/members/${idUsuario}`);
+    return data;
+  },
 };
