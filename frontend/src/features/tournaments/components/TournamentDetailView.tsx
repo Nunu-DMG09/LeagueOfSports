@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Shield, Swords, PlayCircle } from 'lucide-react';
+import { ArrowLeft, Shield, Swords, PlayCircle, Trash2, X, Users, User } from 'lucide-react';
 import { useAuth } from '../../../shared/hooks/useAuth';
 import { useTournamentDetail } from '../hooks/useTournamentDetail';
 
@@ -11,7 +11,9 @@ export default function TournamentDetailView() {
   const { 
     tournament, registeredTeams, allTeams, matches, loading,
     selectedTeam, setSelectedTeam, newMatch, setNewMatch,
-    handleRegisterTeam, handleCreateMatch
+    handleRegisterTeam, handleCreateMatch,
+    handleRemoveTeam, handleRemoveMatch,
+    teamModalOpen, setTeamModalOpen, viewingTeam, viewingTeamMembers, handleViewTeamMembers
   } = useTournamentDetail(Number(id));
 
   if (loading) return <div className="flex h-64 items-center justify-center"><div className="text-base sm:text-lg text-ls-primary animate-pulse">Cargando información del torneo...</div></div>;
@@ -42,20 +44,26 @@ export default function TournamentDetailView() {
                   <p className="text-gray-500 italic text-sm">No hay partidas programadas.</p>
                 ) : (
                   matches.map(m => (
-                    // LA PARTIDA SE ADAPTA EN MÓVIL: En celular el botón baja, en PC se queda a la derecha.
-                    <div key={m.id_partida} className="flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border border-gray-700 bg-ls-bg p-3 sm:p-4 gap-3 sm:gap-4">
+                    <div key={m.id_partida} className="flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border border-gray-700 bg-ls-bg p-3 sm:p-4 gap-3 sm:gap-4 hover:border-gray-500 transition-all">
                       <div className="flex items-center gap-2 sm:gap-4 w-full">
                         <div className="flex-1 text-right font-bold text-blue-400 text-sm sm:text-base truncate" title={m.equipo_azul_nombre}>{m.equipo_azul_nombre}</div>
                         <div className="px-2 sm:px-3 py-1 bg-gray-800 rounded text-[10px] sm:text-xs text-gray-400 font-black shrink-0">VS</div>
                         <div className="flex-1 text-left font-bold text-red-400 text-sm sm:text-base truncate" title={m.equipo_rojo_nombre}>{m.equipo_rojo_nombre}</div>
                       </div>
-                      <div className="flex justify-end shrink-0 w-full sm:w-auto border-t sm:border-0 border-gray-800 pt-2 sm:pt-0">
+                      <div className="flex justify-end shrink-0 w-full sm:w-auto border-t sm:border-0 border-gray-800 pt-2 sm:pt-0 gap-2">
                         {m.id_equipo_ganador ? (
-                          <span className="text-[10px] sm:text-xs font-bold text-ls-success uppercase px-3 py-1.5 bg-ls-success/10 border border-ls-success/20 rounded shadow-sm">Finalizado</span>
+                          <span className="text-[10px] sm:text-xs font-bold text-ls-success uppercase px-3 py-1.5 bg-ls-success/10 border border-ls-success/20 rounded shadow-sm w-full text-center sm:w-auto">Finalizado</span>
                         ) : (
-                          <button onClick={() => navigate(`/matches/${m.id_partida}/manage`)} className="w-full sm:w-auto flex justify-center items-center gap-2 text-xs font-bold text-ls-bg bg-ls-primary hover:bg-ls-primary-hover px-4 py-2 rounded transition">
-                            <PlayCircle size={16} /> Jugar
-                          </button>
+                          <>
+                            {/* Botón Jugar */}
+                            <button onClick={() => navigate(`/matches/${m.id_partida}/manage`)} className="flex-1 sm:flex-none flex justify-center items-center gap-2 text-xs font-bold text-ls-bg bg-ls-primary hover:bg-ls-primary-hover px-4 py-2 rounded transition shadow-md shadow-ls-primary/20">
+                              <PlayCircle size={16} /> Jugar
+                            </button>
+                            {/* Botón Eliminar Partida */}
+                            <button onClick={() => handleRemoveMatch(m.id_partida)} className="flex justify-center items-center gap-2 text-xs font-bold text-white bg-red-600/90 hover:bg-red-500 px-3 py-2 rounded transition shadow-md">
+                              <Trash2 size={16} />
+                            </button>
+                          </>
                         )}
                       </div>
                     </div>
@@ -69,11 +77,29 @@ export default function TournamentDetailView() {
             <h2 className="text-base sm:text-lg font-bold flex items-center gap-2 text-white mb-4"><Shield className="text-ls-gold" size={20}/> Equipos Participantes</h2>
             <div className={`grid grid-cols-1 gap-3 sm:gap-4 ${canManageTournaments ? 'sm:grid-cols-2' : 'sm:grid-cols-2 md:grid-cols-3'}`}>
               {registeredTeams.map(t => (
-                <div key={t.id_equipo} className="flex items-center gap-3 sm:gap-4 rounded-lg border border-gray-700 bg-ls-bg p-2.5 sm:p-3 hover:border-ls-primary/50 transition">
+                <div 
+                  key={t.id_equipo} 
+                  onClick={() => handleViewTeamMembers(t)}
+                  className="relative flex items-center gap-3 sm:gap-4 rounded-lg border border-gray-700 bg-ls-bg p-2.5 sm:p-3 hover:border-ls-primary/50 transition cursor-pointer group shadow-sm hover:shadow-ls-primary/10"
+                >
                   <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center bg-gray-800 rounded p-1 shrink-0">
                     <img src={t.logo_url || 'https://cdn-icons-png.flaticon.com/512/814/814513.png'} className="h-full w-full object-contain drop-shadow-md" alt={t.nombre} onError={(e) => { e.currentTarget.src = 'https://cdn-icons-png.flaticon.com/512/814/814513.png'; }} />
                   </div>
-                  <span className="font-bold text-white text-sm sm:text-base truncate" title={t.nombre}>{t.nombre}</span>
+                  <div className="flex-1 overflow-hidden pr-6">
+                    <span className="font-bold text-white text-sm sm:text-base truncate block" title={t.nombre}>{t.nombre}</span>
+                    <span className="text-[10px] text-ls-primary mt-0.5 flex items-center gap-1"><Users size={10}/> Ver Miembros</span>
+                  </div>
+                  
+                  {/* Botón Eliminar Equipo */}
+                  {canManageTournaments && (
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleRemoveTeam(t.id_equipo); }} 
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-400/10 rounded transition-colors"
+                      title="Expulsar equipo del torneo"
+                    >
+                      <X size={18} />
+                    </button>
+                  )}
                 </div>
               ))}
               {registeredTeams.length === 0 && <p className="text-gray-500 italic col-span-full text-sm">Aún no hay equipos inscritos.</p>}
@@ -116,6 +142,49 @@ export default function TournamentDetailView() {
           </div>
         )}
       </div>
+
+      {/* MODAL DE MIEMBROS DE EQUIPO */}
+      {teamModalOpen && viewingTeam && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setTeamModalOpen(false)}>
+          <div className="w-full max-w-md rounded-xl border border-ls-gold/30 bg-ls-surface shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-gray-700 bg-gradient-to-r from-gray-900 to-gray-800 p-4">
+              <div className="flex items-center gap-3">
+                <img src={viewingTeam.logo_url || 'https://cdn-icons-png.flaticon.com/512/814/814513.png'} className="h-8 w-8 object-contain" alt="Logo" />
+                <h3 className="text-lg font-bold text-white uppercase">{viewingTeam.nombre}</h3>
+              </div>
+              <button onClick={() => setTeamModalOpen(false)} className="text-gray-400 hover:text-white p-1 transition"><X size={20}/></button>
+            </div>
+            
+            <div className="p-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
+              {viewingTeamMembers.length === 0 ? (
+                <p className="text-center text-gray-500 italic py-6 text-sm">Este equipo no tiene jugadores registrados.</p>
+              ) : (
+                <div className="space-y-3">
+                  {viewingTeamMembers.map(member => (
+                    <div key={member.id_usuario} className="flex items-center justify-between rounded-lg border border-gray-700 bg-ls-bg p-3">
+                      <div className="flex items-center gap-3">
+                        <div className="rounded-full bg-gray-800 p-2 text-ls-primary shrink-0"><User size={16} /></div>
+                        <div>
+                          <p className="font-bold text-white text-sm">{member.nickname}</p>
+                          <p className="text-[10px] text-gray-400">{member.elo}</p>
+                        </div>
+                      </div>
+                      <span className={`text-[9px] font-bold uppercase px-2 py-1 rounded shrink-0 ${
+                        member.rol_en_equipo === 'Capitan' ? 'bg-ls-gold text-ls-bg' : 'bg-gray-800 text-gray-300'
+                      }`}>
+                        {member.rol_en_equipo}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="border-t border-gray-700 bg-gray-900/50 p-3 text-center">
+              <button onClick={() => setTeamModalOpen(false)} className="w-full rounded bg-gray-700 px-4 py-2 text-sm font-bold text-white hover:bg-gray-600 transition">Cerrar Roster</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
