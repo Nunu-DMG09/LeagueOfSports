@@ -5,5 +5,6 @@ export interface TournamentRepository {
   findById(id: number): Promise<Tournament | null>;
   registerTeam(registration: TournamentTeam): Promise<void>;
   isTeamRegistered(tournamentId: number, teamId: number): Promise<boolean>;
-  findAll(): Promise<any[]>
+  findAll(): Promise<any[]>;
+  removeTeam(tournamentId: number, teamId: number): Promise<void>;
 }
