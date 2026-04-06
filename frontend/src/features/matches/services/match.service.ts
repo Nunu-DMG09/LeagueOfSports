@@ -22,4 +22,8 @@ export const matchService = {
     const { data } = await api.get(`/matches/${idPartida}`);
     return data;
   },
+  delete: async (idPartida: number) => {
+    const { data } = await api.delete(`/matches/${idPartida}`);
+    return data;
+  },
 };
