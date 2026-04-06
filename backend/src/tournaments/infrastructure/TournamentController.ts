@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
 import { CreateTournamentUseCase } from '../application/CreateTournamentUseCase';
 import { RegisterTeamUseCase } from '../application/RegisterTeamUseCase';
+import { TournamentRepository } from '../domain/TournamentRepository';
 
 export class TournamentController {
   constructor(
     private createUseCase: CreateTournamentUseCase,
-    private registerTeamUseCase: RegisterTeamUseCase
+    private registerTeamUseCase: RegisterTeamUseCase,
+    private tournamentRepository: TournamentRepository
   ) {}
 
   async create(req: Request, res: Response) {
@@ -56,6 +58,18 @@ export class TournamentController {
       res.json(teams);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
+    }
+  }
+
+  async removeTeam(req: Request, res: Response) {
+    try {
+      const tournamentId = Number(req.params.id);
+      const teamId = Number(req.params.teamId);
+      
+      await this.tournamentRepository.removeTeam(tournamentId, teamId);
+      res.json({ message: 'Equipo expulsado del torneo exitosamente' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
     }
   }
 
