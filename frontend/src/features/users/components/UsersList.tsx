@@ -25,7 +25,7 @@ export default function UsersList() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-800 pb-4">
         <div>
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white uppercase tracking-wider flex items-center gap-2">
-            <UsersIcon className="text-ls-primary shrink-0" size={28} /> Directorio de Invocadores
+            <UsersIcon className="text-ls-primary shrink-0" size={28} /> Lista de Invocadores
           </h1>
           <p className="text-xs sm:text-sm text-gray-400 mt-1.5">Consulta los perfiles y rangos de todos los jugadores registrados.</p>
         </div>
