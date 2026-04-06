@@ -9,4 +9,5 @@ export interface MatchRepository {
   getGlobalRanking(): Promise<any[]>;
   findByTournament(tournamentId: number): Promise<any[]>;
   findById(matchId: number): Promise<any>;
+  deleteMatch(matchId: number): Promise<void>;
 }
