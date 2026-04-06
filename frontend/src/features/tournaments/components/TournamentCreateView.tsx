@@ -24,34 +24,36 @@ export default function TournamentCreateView() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <div className="flex items-center gap-4">
-        <button onClick={() => navigate('/tournaments')} className="text-gray-400 hover:text-white transition">
-          <ArrowLeft size={24} />
+    <div className="mx-auto max-w-2xl space-y-6 pb-10">
+      
+      {/* HEADER RESPONSIVO */}
+      <div className="flex items-center gap-3 sm:gap-4">
+        <button onClick={() => navigate('/tournaments')} className="text-gray-400 hover:text-white transition p-1">
+          <ArrowLeft size={24} className="sm:w-[28px] sm:h-[28px]" />
         </button>
-        <h1 className="text-2xl font-bold text-white">Configurar Nueva Competencia</h1>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight">Nueva Competencia</h1>
       </div>
 
-      <div className="rounded-lg border border-ls-gold/20 bg-ls-surface p-8 shadow-2xl">
-        <div className="mb-8 flex justify-center text-ls-gold opacity-50">
-          <Trophy size={64} />
+      <div className="rounded-xl border border-ls-gold/20 bg-ls-surface p-5 sm:p-8 shadow-2xl">
+        <div className="mb-6 sm:mb-8 flex justify-center text-ls-gold opacity-30">
+          <Trophy size={48} className="sm:w-[64px] sm:h-[64px]" />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
           <div>
-            <label className="mb-1 block text-sm text-gray-400">Nombre del Torneo</label>
+            <label className="mb-1.5 block text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-400">Nombre del Torneo</label>
             <input 
               type="text" required placeholder="Ej. Torneo de Apertura 2026"
-              className="w-full rounded border border-gray-700 bg-ls-bg p-3 text-white focus:border-ls-primary outline-none"
+              className="w-full rounded-lg border border-gray-700 bg-ls-bg p-3 sm:p-3.5 text-sm sm:text-base text-white focus:border-ls-primary outline-none transition-colors"
               value={formData.nombre} onChange={e => setFormData({...formData, nombre: e.target.value})}
             />
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm text-gray-400">Modalidad</label>
+              <label className="mb-1.5 block text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-400">Modalidad</label>
               <select 
-                className="w-full rounded border border-gray-700 bg-ls-bg p-3 text-white focus:border-ls-primary outline-none"
+                className="w-full rounded-lg border border-gray-700 bg-ls-bg p-3 sm:p-3.5 text-sm sm:text-base text-white focus:border-ls-primary outline-none transition-colors"
                 value={formData.modalidad} onChange={e => setFormData({...formData, modalidad: e.target.value})}
               >
                 <option value="1v1">1 vs 1</option>
@@ -63,17 +65,17 @@ export default function TournamentCreateView() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm text-gray-400">Fecha de Inicio</label>
+              <label className="mb-1.5 block text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-400">Fecha de Inicio</label>
               <input 
                 type="date" required
-                className="w-full rounded border border-gray-700 bg-ls-bg p-3 text-white focus:border-ls-primary outline-none"
+                className="w-full rounded-lg border border-gray-700 bg-ls-bg p-3 sm:p-3.5 text-sm sm:text-base text-white focus:border-ls-primary outline-none transition-colors"
                 value={formData.fecha_inicio} onChange={e => setFormData({...formData, fecha_inicio: e.target.value})}
               />
             </div>
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-gray-800">
-            <button type="submit" className="rounded bg-ls-primary px-10 py-3 font-bold text-ls-bg transition hover:bg-ls-primary-hover">
+          <div className="flex justify-end pt-6 mt-2 border-t border-gray-800">
+            <button type="submit" className="w-full sm:w-auto rounded-lg bg-ls-primary px-10 py-3 sm:py-3.5 text-sm sm:text-base font-bold text-ls-bg transition hover:bg-ls-primary-hover shadow-lg shadow-ls-primary/20">
               Publicar Torneo
             </button>
           </div>
