@@ -36,4 +36,15 @@ export class KnexTeamRepository implements TeamRepository {
   async findAll(): Promise<any[]> {
     return await db('equipos').orderBy('fecha_creacion', 'desc');
   }
+
+  async removeMember(teamId: number, userId: number): Promise<void> {
+    // Borramos la relación entre el equipo y el usuario
+    const deletedRows = await db('equipo_miembros')
+      .where({ id_equipo: teamId, id_usuario: userId })
+      .del();
+
+    if (deletedRows === 0) {
+      throw new Error('El invocador no pertenece a este equipo');
+    }
+  }
 }
