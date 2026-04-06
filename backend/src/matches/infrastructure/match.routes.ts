@@ -11,7 +11,8 @@ const repo = new KnexMatchRepository();
 const controller = new MatchController(
   new CreateMatchUseCase(repo),
   new FinishMatchUseCase(repo),
-  new RegisterPlayerStatsUseCase(repo)
+  new RegisterPlayerStatsUseCase(repo),
+  repo
 );
 
 // ¡LA NUEVA RUTA BLINDADA!
@@ -22,5 +23,6 @@ router.get('/:id_partida', controller.getById.bind(controller));
 router.put('/:id_partida/finish', controller.finish.bind(controller));
 router.post('/:id_partida/stats', controller.registerStats.bind(controller));
 router.post('/', controller.create.bind(controller));
+router.delete('/:id', controller.delete.bind(controller));
 
 export default router;
