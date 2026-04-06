@@ -9,7 +9,6 @@ export function useTeamDetail(teamId: number) {
   const [members, setMembers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newMember, setNewMember] = useState({ id_usuario: '', rol_en_equipo: 'Titular' });
   
   const { canManageTeams } = useAuth(); 
 
@@ -36,26 +35,38 @@ export function useTeamDetail(teamId: number) {
     loadData();
   }, [teamId]);
 
-  const handleAddMember = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMember.id_usuario) return toast.error('Selecciona un invocador');
-
+  // NUEVO: Asignar Miembro (Recibe el usuario y el rol directamente del botón)
+  const handleAddMember = async (userId: number, role: string) => {
     try {
       await teamService.addMember(teamId, {
-        id_usuario: Number(newMember.id_usuario),
-        rol_en_equipo: newMember.rol_en_equipo
+        id_usuario: userId,
+        rol_en_equipo: role
       });
-      toast.success('Invocador asignado al equipo');
-      setNewMember({ id_usuario: '', rol_en_equipo: 'Titular' });
+      toast.success(`Invocador reclutado como ${role}`);
       loadData();
     } catch (error: any) {
       toast.error(error.response?.data?.error || 'Error al asignar miembro');
     }
   };
 
+  // NUEVO: Expulsar Miembro
+  const handleRemoveMember = async (userId: number) => {
+    if (!window.confirm('¿Estás seguro de expulsar a este jugador del equipo?')) return;
+    try {
+      await teamService.removeMember(teamId, userId);
+      toast.success('Jugador expulsado de la escuadra');
+      loadData();
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Error al expulsar al jugador');
+    }
+  };
+
+  // NUEVO: Filtramos para que solo aparezcan los usuarios que NO están en el equipo actual
+  const availableUsers = allUsers.filter(u => !members.some(m => m.id_usuario === u.id_usuario));
+
   return {
-    team, members, allUsers, loading,
-    newMember, setNewMember, handleAddMember,
+    team, members, availableUsers, loading,
+    handleAddMember, handleRemoveMember,
     canManageTeams
   };
 }
