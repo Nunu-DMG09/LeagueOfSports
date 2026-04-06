@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { tournamentService } from '../services/tournament.service';
 import { teamService } from '../../teams/services/team.service';
 import { matchService } from '../../matches/services/match.service';
+import { useAuth } from '../../../shared/hooks/useAuth';
 
 export function useTournamentDetail(tournamentId: number) {
   const [tournament, setTournament] = useState<any>(null);
@@ -13,6 +14,13 @@ export function useTournamentDetail(tournamentId: number) {
 
   const [selectedTeam, setSelectedTeam] = useState('');
   const [newMatch, setNewMatch] = useState({ equipo_azul: '', equipo_rojo: '' });
+  
+  // Nuevos estados para el Modal de Miembros de Equipo
+  const [teamModalOpen, setTeamModalOpen] = useState(false);
+  const [viewingTeam, setViewingTeam] = useState<any>(null);
+  const [viewingTeamMembers, setViewingTeamMembers] = useState<any[]>([]);
+
+  const { canManageTournaments } = useAuth(); 
 
   const loadData = async () => {
     if (!tournamentId || isNaN(tournamentId)) return;
@@ -30,7 +38,7 @@ export function useTournamentDetail(tournamentId: number) {
       const matchesData = await matchService.getByTournament(tournamentId);
       setMatches(matchesData);
     } catch (error) {
-      toast.error('Error al conectar con el servidor');
+      toast.error('Error al cargar la información del torneo');
     } finally {
       setLoading(false);
     }
@@ -70,9 +78,47 @@ export function useTournamentDetail(tournamentId: number) {
     }
   };
 
+  // NUEVA FUNCIÓN: Remover Equipo
+  const handleRemoveTeam = async (teamId: number) => {
+    if (!window.confirm('¿Seguro que deseas expulsar a este equipo del torneo?')) return;
+    try {
+      await tournamentService.removeTeam(tournamentId, teamId);
+      toast.success('Equipo eliminado del torneo');
+      loadData();
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'No se puede eliminar el equipo (¿Ya tiene partidas?)');
+    }
+  };
+
+  // NUEVA FUNCIÓN: Borrar Partida
+  const handleRemoveMatch = async (matchId: number) => {
+    if (!window.confirm('¿Seguro que deseas eliminar este enfrentamiento programado?')) return;
+    try {
+      await matchService.delete(matchId);
+      toast.success('Enfrentamiento eliminado correctamente');
+      loadData();
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Error al eliminar la partida');
+    }
+  };
+
+  // NUEVA FUNCIÓN: Ver Miembros del equipo
+  const handleViewTeamMembers = async (team: any) => {
+    try {
+      setViewingTeam(team);
+      setTeamModalOpen(true);
+      const members = await teamService.getMembers(team.id_equipo);
+      setViewingTeamMembers(members);
+    } catch (error) {
+      toast.error('Error al cargar la alineación del equipo');
+    }
+  };
+
   return {
     tournament, registeredTeams, allTeams, matches, loading,
     selectedTeam, setSelectedTeam, newMatch, setNewMatch,
-    handleRegisterTeam, handleCreateMatch
+    handleRegisterTeam, handleCreateMatch, canManageTournaments,
+    handleRemoveTeam, handleRemoveMatch, // Exportamos funciones de borrado
+    teamModalOpen, setTeamModalOpen, viewingTeam, viewingTeamMembers, handleViewTeamMembers // Exportamos funciones del modal
   };
 }
