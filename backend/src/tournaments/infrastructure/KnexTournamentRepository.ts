@@ -33,4 +33,23 @@ export class KnexTournamentRepository implements TournamentRepository {
       .select('equipos.id_equipo', 'equipos.nombre', 'equipos.logo_url', 'torneo_equipos.estado_inscripcion')
       .where('torneo_equipos.id_torneo', idTorneo);
   }
+
+  async removeTeam(tournamentId: number, teamId: number): Promise<void> {
+    // VALIDACIÓN: Verificamos si el equipo ya tiene partidas programadas en este torneo
+    const hasMatches = await db('partidas')
+      .where({ id_torneo: tournamentId })
+      .andWhere(function() {
+        this.where('id_equipo_azul', teamId).orWhere('id_equipo_rojo', teamId);
+      })
+      .first();
+
+    if (hasMatches) {
+      throw new Error('No puedes expulsar a este equipo porque tiene partidas programadas. Elimina sus VS primero.');
+    }
+
+    // Si no tiene partidas, lo eliminamos de la tabla pivote del torneo
+    await db('torneo_equipos')
+      .where({ id_torneo: tournamentId, id_equipo: teamId })
+      .del();
+  }
 }
