@@ -18,7 +18,7 @@ export default function TeamsList() {
             onClick={() => navigate('/teams/new')}
             className="w-full sm:w-auto rounded-lg bg-ls-primary px-5 py-3 sm:py-2.5 text-sm font-bold text-ls-bg transition hover:bg-ls-primary-hover shadow-lg shadow-ls-primary/20"
           >
-            + Fundar Equipo
+            + Registrar Equipo
           </button>
         )}
       </div>
@@ -57,7 +57,7 @@ export default function TeamsList() {
                 onClick={() => navigate(`/teams/${team.id_equipo}`)}
                 className="w-full bg-ls-bg/50 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-gray-400 transition-colors hover:bg-ls-primary hover:text-ls-bg uppercase tracking-widest mt-auto shrink-0"
               >
-                Ver Roster
+                Ver Miembros
               </button>
             </div>
           ))}
