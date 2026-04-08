@@ -54,7 +54,7 @@ export default function TeamsList() {
                 <div className="mt-2">
                   <span className={`inline-block rounded-full px-3 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider ${
                     team.estado === 'activo' ? 'bg-ls-success/10 text-ls-success' : 
-                    team.estado === 'campeón' ? 'bg-ls-gold text-ls-bg shadow-[0_0_10px_rgba(200,170,110,0.5)]' :
+                    team.estado === 'campeon' ? 'bg-ls-gold text-ls-bg shadow-[0_0_10px_rgba(200,170,110,0.5)]' :
                     team.estado === 'descalificado' ? 'bg-gray-800 text-gray-500' : 'bg-ls-danger/10 text-ls-danger'
                   }`}>
                     {team.estado}

@@ -74,7 +74,7 @@ export default function TeamEditModal({ isOpen, team, onClose, onSuccess }: Team
               <option value="activo">Activo</option>
               <option value="inactivo">Inactivo</option>
               <option value="descalificado">Descalificado</option>
-              <option value="campeón">Campeón</option>
+              <option value="campeon">Campeón</option>
             </select>
           </div>
 

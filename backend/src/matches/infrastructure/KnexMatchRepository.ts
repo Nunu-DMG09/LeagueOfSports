@@ -71,13 +71,13 @@ export class KnexMatchRepository implements MatchRepository {
           .update({ puntos_totales: 0 });
       }
 
-      // 5. ACTUALIZAR ESTADO DE LOS EQUIPOS (Campeón / Descalificado)
+      // 5. ACTUALIZAR ESTADO DE LOS EQUIPOS (Campeon / Descalificado)
       const loserTeamId = winnerTeamId === match.id_equipo_azul ? match.id_equipo_rojo : match.id_equipo_azul;
 
-      // El ganador pasa a 'campeón'
+      // El ganador pasa a 'campeon'
       await trx('equipos')
         .where({ id_equipo: winnerTeamId })
-        .update({ estado: 'campeón' });
+        .update({ estado: 'campeon' });
 
       // El perdedor pasa a 'descalificado'
       await trx('equipos')
