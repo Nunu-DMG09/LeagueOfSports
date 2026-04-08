@@ -47,4 +47,25 @@ export class KnexTeamRepository implements TeamRepository {
       throw new Error('El invocador no pertenece a este equipo');
     }
   }
+
+  async updateTeam(id: number, teamData: any): Promise<void> {
+    await db('equipos').where({ id_equipo: id }).update(teamData);
+  }
+
+  async deleteTeam(id: number): Promise<void> {
+    await db.transaction(async (trx) => {
+      // 1. Verificamos si el equipo ya tiene partidas jugadas/programadas
+      const hasMatches = await trx('partidas').where('id_equipo_azul', id).orWhere('id_equipo_rojo', id).first();
+      if (hasMatches) {
+        throw new Error('No se puede eliminar un equipo con historial de partidas.');
+      }
+
+      // 2. Borramos sus relaciones (miembros y torneos)
+      await trx('equipo_miembros').where({ id_equipo: id }).del();
+      await trx('torneo_equipos').where({ id_equipo: id }).del();
+      
+      // 3. Borramos el equipo
+      await trx('equipos').where({ id_equipo: id }).del();
+    });
+  }
 }
