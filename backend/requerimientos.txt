@@ -8,3 +8,6 @@ npm install -D @types/express @types/cors @types/bcryptjs @types/jsonwebtoken
 npm install -D typescript @types/node ts-node
 npm install knex
 npx tsc --init
+
+npm install multer
+npm install -D @types/multer
