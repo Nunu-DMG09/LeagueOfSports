@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { upload } from '../../shared/middlewares/upload.middleware';
 import { KnexTeamRepository } from './KnexTeamRepository';
 import { CreateTeamUseCase } from '../application/CreateTeamUseCase';
 import { AddTeamMemberUseCase } from '../application/AddTeamMemberUseCase';
@@ -15,7 +16,7 @@ const controller = new TeamController(
 
 router.get('/', controller.getAll.bind(controller));
 router.get('/:id_equipo', controller.getById.bind(controller));
-router.post('/', controller.create.bind(controller));
+router.post('/', upload.single('logo'), controller.create.bind(controller));
 router.post('/:id_equipo/members', controller.addMember.bind(controller));
 router.get('/:id_equipo/members', controller.getMembers.bind(controller));
 router.delete('/:id/members/:userId', controller.removeMember.bind(controller));

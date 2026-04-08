@@ -15,8 +15,21 @@ export class TeamController {
 
   async create(req: Request, res: Response) {
     try {
-      const id = await this.createTeamUseCase.execute(req.body);
-      res.status(201).json({ message: 'Equipo creado', id_equipo: id });
+      const { nombre } = req.body;
+      
+      let logo_url: string | undefined = undefined;
+
+      if (req.file) {
+        logo_url = `/uploads/${req.file.filename}`;
+      }
+
+      await this.createTeamUseCase.execute({
+        nombre,
+        logo_url,
+        estado: 'activo'
+      });
+
+      res.status(201).json({ message: 'Equipo creado exitosamente' });
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -68,7 +81,6 @@ export class TeamController {
       const teamId = Number(req.params.id);
       const userId = Number(req.params.userId);
       
-      // Ahora TypeScript sí reconocerá this.teamRepository
       await this.teamRepository.removeMember(teamId, userId);
       
       res.json({ message: 'Jugador expulsado del equipo exitosamente' });
