@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import cors from 'cors';
 import authRoutes from './src/users/infrastructure/auth.routes';
 import userRoutes from './src/users/infrastructure/user.routes';
@@ -17,6 +18,8 @@ app.use(cors({
   origin: process.env.VITE_FRONTEND_URL || 'http://localhost:5173',
   credentials: true
 }));
+
+app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')));
 
 // Montar rutas
 // Grita su arquitectura: Todas las rutas de auth bajo /api/auth
