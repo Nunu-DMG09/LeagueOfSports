@@ -34,4 +34,13 @@ export const teamService = {
     const { data } = await api.delete(`/teams/${idEquipo}/members/${idUsuario}`);
     return data;
   },
+
+  update: async (id: number, data: FormData) => {
+    const response = await api.put(`/teams/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: number) => {
+    const response = await api.delete(`/teams/${id}`);
+    return response.data;
+  },
 };

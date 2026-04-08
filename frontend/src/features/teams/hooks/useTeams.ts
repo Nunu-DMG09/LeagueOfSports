@@ -6,21 +6,33 @@ import { useAuth } from '../../../shared/hooks/useAuth';
 export function useTeams() {
   const [teams, setTeams] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const { canManageTeams } = useAuth(); 
+  const { canManageTeams } = useAuth();
+
+  const fetchTeams = async () => {
+    try {
+      setLoading(true);
+      const data = await teamService.getAll();
+      setTeams(data);
+    } catch (error) {
+      toast.error('Error al cargar los equipos');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTeams = async () => {
-      try {
-        const data = await teamService.getAll();
-        setTeams(data);
-      } catch (error) {
-        toast.error('Error al cargar los equipos');
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchTeams();
   }, []);
 
-  return { teams, loading, canManageTeams };
+  const confirmDelete = async (id: number) => {
+    try {
+      await teamService.delete(id);
+      toast.success('Equipo eliminado permanentemente');
+      fetchTeams();
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Error al eliminar el equipo');
+    }
+  };
+
+  return { teams, loading, canManageTeams, fetchTeams, confirmDelete };
 }
