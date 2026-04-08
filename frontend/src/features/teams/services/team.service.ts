@@ -5,10 +5,17 @@ export const teamService = {
     const { data } = await api.get('/teams');
     return data;
   },
-  create: async (teamData: { nombre: string; logo_url?: string }) => {
-    const { data } = await api.post('/teams', teamData);
-    return data;
+
+  create: async (data: FormData) => {
+   
+    const response = await api.post('/teams', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
   },
+
   getMembers: async (idEquipo: number) => {
     const { data } = await api.get(`/teams/${idEquipo}/members`);
     return data;
@@ -20,7 +27,7 @@ export const teamService = {
 
   getById: async (id: number) => {
     const { data } = await api.get(`/teams/${id}`);
-    return data;
+    return data;  
   },
 
   removeMember: async (idEquipo: number, idUsuario: number) => {
