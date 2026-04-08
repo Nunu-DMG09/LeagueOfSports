@@ -9,4 +9,6 @@ export interface TeamRepository {
   isUserInAnyTeam(userId: number): Promise<boolean>;
   findAll(): Promise<any[]>;
   removeMember(teamId: number, userId: number): Promise<void>;
+  updateTeam(id: number, data: any): Promise<void>;
+  deleteTeam(id: number): Promise<void>;
 }
