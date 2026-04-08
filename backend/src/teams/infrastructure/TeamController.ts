@@ -88,4 +88,33 @@ export class TeamController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  async update(req: Request, res: Response) {
+    try {
+      const teamId = Number(req.params.id_equipo);
+      const { nombre, estado } = req.body;
+      
+      const dataToUpdate: any = { nombre, estado };
+      
+      // Si se subió un nuevo logo, lo actualizamos
+      if (req.file) {
+        dataToUpdate.logo_url = `/uploads/${req.file.filename}`;
+      }
+
+      await this.teamRepository.updateTeam(teamId, dataToUpdate);
+      res.json({ message: 'Equipo actualizado exitosamente' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async delete(req: Request, res: Response) {
+    try {
+      const teamId = Number(req.params.id_equipo);
+      await this.teamRepository.deleteTeam(teamId);
+      res.json({ message: 'Equipo eliminado exitosamente' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
 }
