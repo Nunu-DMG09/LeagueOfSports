@@ -13,25 +13,22 @@ export default function TeamDetailView() {
     canManageTeams 
   } = useTeamDetail(Number(id));
 
-  // Estado local para buscar usuarios rápidamente en la lista
   const [searchTerm, setSearchTerm] = useState('');
 
   if (loading) return <div className="text-center py-10 sm:py-20 text-ls-primary animate-pulse text-sm sm:text-base font-bold">Cargando Escuadra...</div>;
   if (!team) return <div className="text-center py-10 sm:py-20 text-ls-danger font-bold text-lg sm:text-xl">Equipo no encontrado</div>;
 
-  // Filtrar los usuarios disponibles según el buscador
   const filteredUsers = availableUsers.filter(u => u.nickname.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
     <div className="space-y-6 sm:space-y-8 pb-10">
-      {/* HEADER DEL EQUIPO RESPONSIVO */}
       <div className="flex flex-col gap-4 sm:gap-6 md:flex-row md:items-center md:justify-between border-b border-ls-gold/20 pb-4 sm:pb-6">
         <div className="flex items-start sm:items-center gap-3 sm:gap-4">
           <button onClick={() => navigate('/teams')} className="text-gray-400 hover:text-white transition mt-2 sm:mt-0 p-1">
             <ArrowLeft size={24} className="sm:w-[28px] sm:h-[28px]" />
           </button>
           <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-xl border border-ls-gold/30 bg-ls-surface p-2 shrink-0 shadow-lg shadow-ls-gold/10">
-            {team.logo_url ? <img src={team.logo_url} className="h-full w-full object-contain" alt={team.nombre} /> : <ShieldCheck className="h-full w-full text-ls-gold" />}
+            {team.logo_url ? <img src={`${import.meta.env.VITE_API_URL}${team.logo_url}`} className="h-full w-full object-contain" alt={team.nombre} /> : <ShieldCheck className="h-full w-full text-ls-gold" />}
           </div>
           <div className="overflow-hidden">
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-white uppercase tracking-tighter truncate" title={team.nombre}>{team.nombre}</h1>
@@ -42,7 +39,6 @@ export default function TeamDetailView() {
 
       <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-3">
         
-        {/* LISTA DE MIEMBROS (ROSTER) */}
         <div className={canManageTeams ? "lg:col-span-2 space-y-4" : "lg:col-span-3 space-y-4"}>
           <h2 className="text-lg sm:text-xl font-bold text-ls-gold flex items-center gap-2">
             <Star size={20} /> MIEMBROS ACTUALES
@@ -70,7 +66,6 @@ export default function TeamDetailView() {
                       {member.rol_en_equipo}
                     </span>
                     
-                    {/* BOTÓN EXPULSAR (Solo Admins) */}
                     {canManageTeams && (
                       <button 
                         onClick={() => handleRemoveMember(member.id_usuario)}
@@ -87,14 +82,12 @@ export default function TeamDetailView() {
           </div>
         </div>
 
-        {/* PANEL INTERACTIVO DE RECLUTAMIENTO (Protegido) */}
         {canManageTeams && (
           <div className="rounded-xl border border-ls-gold/20 bg-ls-surface p-4 sm:p-6 shadow-xl flex flex-col max-h-[600px]">
             <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2 shrink-0">
               <UserPlus size={20} className="text-ls-primary" /> Reclutar Invocadores
             </h3>
             
-            {/* Buscador Rápido */}
             <div className="relative mb-4 shrink-0">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
               <input 
@@ -106,7 +99,6 @@ export default function TeamDetailView() {
               />
             </div>
 
-            {/* Lista Scrollable de Invocadores Libres */}
             <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2.5 pr-2">
               {filteredUsers.length === 0 ? (
                 <p className="text-center text-gray-500 text-xs italic py-6">No se encontraron invocadores libres.</p>
@@ -124,7 +116,6 @@ export default function TeamDetailView() {
                       </div>
                     </div>
                     
-                    {/* Botones de Asignación Rápida */}
                     <div className="flex items-center gap-1.5 shrink-0 justify-end border-t border-gray-800 sm:border-0 pt-2 sm:pt-0">
                       <button 
                         onClick={() => handleAddMember(u.id_usuario, 'Titular')} 
