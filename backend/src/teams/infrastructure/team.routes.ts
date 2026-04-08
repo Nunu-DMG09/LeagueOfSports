@@ -17,6 +17,10 @@ const controller = new TeamController(
 router.get('/', controller.getAll.bind(controller));
 router.get('/:id_equipo', controller.getById.bind(controller));
 router.post('/', upload.single('logo'), controller.create.bind(controller));
+
+router.put('/:id_equipo', upload.single('logo'), controller.update.bind(controller));
+router.delete('/:id_equipo', controller.delete.bind(controller));
+
 router.post('/:id_equipo/members', controller.addMember.bind(controller));
 router.get('/:id_equipo/members', controller.getMembers.bind(controller));
 router.delete('/:id/members/:userId', controller.removeMember.bind(controller));
