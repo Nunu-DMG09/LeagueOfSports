@@ -75,14 +75,17 @@ export class KnexMatchRepository implements MatchRepository {
       const loserTeamId = winnerTeamId === match.id_equipo_azul ? match.id_equipo_rojo : match.id_equipo_azul;
 
       // El ganador pasa a 'campeon'
-      await trx('equipos')
-        .where({ id_equipo: winnerTeamId })
-        .update({ estado: 'campeon' });
+      await trx('torneo_equipos')
+        .where({ id_torneo: match.id_torneo, id_equipo: winnerTeamId })
+        .update({ estado_inscripcion: 'campeon' });
 
       // El perdedor pasa a 'descalificado'
-      await trx('equipos')
-        .where({ id_equipo: loserTeamId })
-        .update({ estado: 'descalificado' });
+      await trx('torneo_equipos')
+        .where({ 
+          id_torneo: match.id_torneo,
+          id_equipo: loserTeamId 
+        })
+        .update({ estado_inscripcion: 'descalificado' });
 
       // 6. VERIFICAR SI EL TORNEO HA FINALIZADO
       // Buscamos todas las partidas de este torneo

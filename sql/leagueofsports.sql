@@ -108,6 +108,7 @@ CREATE TABLE `estadisticas_partida` (
   `campeon_jugado` VARCHAR(50) NOT NULL,
   `kills` INT DEFAULT 0,
   `deaths` INT DEFAULT 0,
+  
   `assists` INT DEFAULT 0,
   `minions_asesinados` INT DEFAULT 0,
   `oro_total` INT DEFAULT 0,
