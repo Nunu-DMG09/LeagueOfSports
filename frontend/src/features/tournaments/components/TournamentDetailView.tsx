@@ -82,8 +82,12 @@ export default function TournamentDetailView() {
                   onClick={() => handleViewTeamMembers(t)}
                   className="relative flex items-center gap-3 sm:gap-4 rounded-lg border border-gray-700 bg-ls-bg p-2.5 sm:p-3 hover:border-ls-primary/50 transition cursor-pointer group shadow-sm hover:shadow-ls-primary/10"
                 >
-                  <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center bg-gray-800 rounded p-1 shrink-0">
-                    <img src={t.logo_url || 'https://cdn-icons-png.flaticon.com/512/814/814513.png'} className="h-full w-full object-contain drop-shadow-md" alt={t.nombre} onError={(e) => { e.currentTarget.src = 'https://cdn-icons-png.flaticon.com/512/814/814513.png'; }} />
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 overflow-hidden shrink-0 border border-ls-gold/20 bg-ls-surface rounded-lg">
+                    <img 
+                      src={`${import.meta.env.VITE_API_URL}${t.logo_url}`} 
+                      className="h-full w-full object-cover" 
+                      alt={t.nombre} 
+                    />
                   </div>
                   <div className="flex-1 overflow-hidden pr-6">
                     <span className="font-bold text-white text-sm sm:text-base truncate block" title={t.nombre}>{t.nombre}</span>
@@ -112,7 +116,7 @@ export default function TournamentDetailView() {
             <div className="rounded-xl border border-ls-gold/20 bg-ls-surface p-5 sm:p-6 shadow-xl">
               <h3 className="mb-4 font-bold text-white uppercase border-b border-gray-700 pb-2 text-sm sm:text-base">Inscribir Equipo</h3>
               <select className="w-full rounded-lg bg-ls-bg border border-gray-700 p-2.5 sm:p-3 text-sm sm:text-base text-white outline-none focus:border-ls-primary" value={selectedTeam} onChange={e => setSelectedTeam(e.target.value)}>
-                <option value="">-- Seleccionar Equipo --</option>
+                <option value="">Selecciona los equipos</option>
                 {allTeams.map(t => <option key={t.id_equipo} value={t.id_equipo}>{t.nombre}</option>)}
               </select>
               <button onClick={handleRegisterTeam} disabled={!selectedTeam} className={`mt-4 w-full rounded-lg py-2.5 sm:py-3 text-sm sm:text-base font-bold transition-all shadow-lg ${selectedTeam ? 'bg-ls-gold text-ls-bg hover:bg-ls-gold-hover shadow-ls-gold/20' : 'bg-gray-700 text-gray-500 cursor-not-allowed shadow-none'}`}>Añadir al Torneo</button>
@@ -125,14 +129,14 @@ export default function TournamentDetailView() {
                 <div>
                   <label className="text-[10px] sm:text-xs text-blue-400 font-bold mb-1 block uppercase tracking-wider">Lado Azul</label>
                   <select className="w-full rounded-lg bg-ls-bg border border-blue-900/50 p-2.5 sm:p-3 text-sm sm:text-base text-white focus:border-blue-500 outline-none" value={newMatch.equipo_azul} onChange={e => setNewMatch({...newMatch, equipo_azul: e.target.value})}>
-                    <option value="">-- Equipo Azul --</option>
+                    <option value="">Equipo Azul</option>
                     {registeredTeams.map(t => <option key={t.id_equipo} value={t.id_equipo}>{t.nombre}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="text-[10px] sm:text-xs text-red-400 font-bold mb-1 block uppercase tracking-wider">Lado Rojo</label>
                   <select className="w-full rounded-lg bg-ls-bg border border-red-900/50 p-2.5 sm:p-3 text-sm sm:text-base text-white focus:border-red-500 outline-none" value={newMatch.equipo_rojo} onChange={e => setNewMatch({...newMatch, equipo_rojo: e.target.value})}>
-                    <option value="">-- Equipo Rojo --</option>
+                    <option value="">Equipo Rojo</option>
                     {registeredTeams.map(t => <option key={t.id_equipo} value={t.id_equipo}>{t.nombre}</option>)}
                   </select>
                 </div>
@@ -180,7 +184,7 @@ export default function TournamentDetailView() {
               )}
             </div>
             <div className="border-t border-gray-700 bg-gray-900/50 p-3 text-center">
-              <button onClick={() => setTeamModalOpen(false)} className="w-full rounded bg-gray-700 px-4 py-2 text-sm font-bold text-white hover:bg-gray-600 transition">Cerrar Roster</button>
+              <button onClick={() => setTeamModalOpen(false)} className="w-full rounded bg-gray-700 px-4 py-2 text-sm font-bold text-white hover:bg-gray-600 transition">Cerrar</button>
             </div>
           </div>
         </div>

@@ -64,11 +64,12 @@ export default function TournamentCreateView() {
               </select>
             </div>
 
-            <div>
+           <div>
               <label className="mb-1.5 block text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-400">Fecha de Inicio</label>
               <input 
                 type="date" required
-                className="w-full rounded-lg border border-gray-700 bg-ls-bg p-3 sm:p-3.5 text-sm sm:text-base text-white focus:border-ls-primary outline-none transition-colors"
+                /* ¡AQUÍ ESTÁ LA MAGIA! Agregamos [color-scheme:dark] al final */
+                className="w-full rounded-lg border border-gray-700 bg-ls-bg p-3 sm:p-3.5 text-sm sm:text-base text-white focus:border-ls-primary outline-none transition-colors [color-scheme:dark]"
                 value={formData.fecha_inicio} onChange={e => setFormData({...formData, fecha_inicio: e.target.value})}
               />
             </div>
