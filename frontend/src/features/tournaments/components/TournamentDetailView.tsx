@@ -82,13 +82,20 @@ export default function TournamentDetailView() {
                   onClick={() => handleViewTeamMembers(t)}
                   className="relative flex items-center gap-3 sm:gap-4 rounded-lg border border-gray-700 bg-ls-bg p-2.5 sm:p-3 hover:border-ls-primary/50 transition cursor-pointer group shadow-sm hover:shadow-ls-primary/10"
                 >
-                  <div className="h-12 w-12 sm:h-14 sm:w-14 overflow-hidden shrink-0 border border-ls-gold/20 bg-ls-surface rounded-lg">
-                    <img 
-                      src={`${import.meta.env.VITE_API_URL}${t.logo_url}`} 
-                      className="h-full w-full object-cover" 
-                      alt={t.nombre} 
-                    />
+                  
+                  {/* LOGO DEL EQUIPO CORREGIDO */}
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 overflow-hidden shrink-0 border border-ls-gold/20 bg-ls-surface rounded-lg flex items-center justify-center">
+                    {t.logo_url ? (
+                      <img 
+                        src={`${import.meta.env.VITE_API_URL}${t.logo_url}`} 
+                        className="h-full w-full object-cover" 
+                        alt={t.nombre} 
+                      />
+                    ) : (
+                      <Shield size={24} className="text-ls-gold opacity-50" />
+                    )}
                   </div>
+                  
                   <div className="flex-1 overflow-hidden pr-6">
                     <span className="font-bold text-white text-sm sm:text-base truncate block" title={t.nombre}>{t.nombre}</span>
                     <span className="text-[10px] text-ls-primary mt-0.5 flex items-center gap-1"><Users size={10}/> Ver Miembros</span>
@@ -116,8 +123,8 @@ export default function TournamentDetailView() {
             <div className="rounded-xl border border-ls-gold/20 bg-ls-surface p-5 sm:p-6 shadow-xl">
               <h3 className="mb-4 font-bold text-white uppercase border-b border-gray-700 pb-2 text-sm sm:text-base">Inscribir Equipo</h3>
               <select className="w-full rounded-lg bg-ls-bg border border-gray-700 p-2.5 sm:p-3 text-sm sm:text-base text-white outline-none focus:border-ls-primary" value={selectedTeam} onChange={e => setSelectedTeam(e.target.value)}>
-                <option value="">Selecciona los equipos</option>
-                {allTeams.map(t => <option key={t.id_equipo} value={t.id_equipo}>{t.nombre}</option>)}
+                <option className="bg-gray-900 text-white" value="">Selecciona los equipos</option>
+                {allTeams.map(t => <option className="bg-gray-900 text-white" key={t.id_equipo} value={t.id_equipo}>{t.nombre}</option>)}
               </select>
               <button onClick={handleRegisterTeam} disabled={!selectedTeam} className={`mt-4 w-full rounded-lg py-2.5 sm:py-3 text-sm sm:text-base font-bold transition-all shadow-lg ${selectedTeam ? 'bg-ls-gold text-ls-bg hover:bg-ls-gold-hover shadow-ls-gold/20' : 'bg-gray-700 text-gray-500 cursor-not-allowed shadow-none'}`}>Añadir al Torneo</button>
             </div>
@@ -129,15 +136,15 @@ export default function TournamentDetailView() {
                 <div>
                   <label className="text-[10px] sm:text-xs text-blue-400 font-bold mb-1 block uppercase tracking-wider">Lado Azul</label>
                   <select className="w-full rounded-lg bg-ls-bg border border-blue-900/50 p-2.5 sm:p-3 text-sm sm:text-base text-white focus:border-blue-500 outline-none" value={newMatch.equipo_azul} onChange={e => setNewMatch({...newMatch, equipo_azul: e.target.value})}>
-                    <option value="">Equipo Azul</option>
-                    {registeredTeams.map(t => <option key={t.id_equipo} value={t.id_equipo}>{t.nombre}</option>)}
+                    <option className="bg-gray-900 text-white" value="">Equipo Azul</option>
+                    {registeredTeams.map(t => <option className="bg-gray-900 text-white" key={t.id_equipo} value={t.id_equipo}>{t.nombre}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="text-[10px] sm:text-xs text-red-400 font-bold mb-1 block uppercase tracking-wider">Lado Rojo</label>
                   <select className="w-full rounded-lg bg-ls-bg border border-red-900/50 p-2.5 sm:p-3 text-sm sm:text-base text-white focus:border-red-500 outline-none" value={newMatch.equipo_rojo} onChange={e => setNewMatch({...newMatch, equipo_rojo: e.target.value})}>
-                    <option value="">Equipo Rojo</option>
-                    {registeredTeams.map(t => <option key={t.id_equipo} value={t.id_equipo}>{t.nombre}</option>)}
+                    <option className="bg-gray-900 text-white" value="">Equipo Rojo</option>
+                    {registeredTeams.map(t => <option className="bg-gray-900 text-white" key={t.id_equipo} value={t.id_equipo}>{t.nombre}</option>)}
                   </select>
                 </div>
                 <button onClick={handleCreateMatch} disabled={!newMatch.equipo_azul || !newMatch.equipo_rojo} className="w-full rounded-lg py-2.5 sm:py-3 text-sm sm:text-base font-bold bg-ls-primary text-ls-bg hover:bg-ls-primary-hover transition disabled:opacity-50 mt-4 shadow-lg shadow-ls-primary/20">Programar VS</button>
@@ -152,10 +159,23 @@ export default function TournamentDetailView() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setTeamModalOpen(false)}>
           <div className="w-full max-w-md rounded-xl border border-ls-gold/30 bg-ls-surface shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-gray-700 bg-gradient-to-r from-gray-900 to-gray-800 p-4">
+              
+              {/* LOGO DEL MODAL CORREGIDO */}
               <div className="flex items-center gap-3">
-                <img src={viewingTeam.logo_url || 'https://cdn-icons-png.flaticon.com/512/814/814513.png'} className="h-8 w-8 object-contain" alt="Logo" />
+                <div className="h-10 w-10 overflow-hidden shrink-0 rounded border border-gray-700 bg-ls-bg flex items-center justify-center">
+                  {viewingTeam.logo_url ? (
+                    <img 
+                      src={`${import.meta.env.VITE_API_URL}${viewingTeam.logo_url}`} 
+                      className="h-full w-full object-cover" 
+                      alt={viewingTeam.nombre} 
+                    />
+                  ) : (
+                    <Shield size={20} className="text-ls-gold opacity-50" />
+                  )}
+                </div>
                 <h3 className="text-lg font-bold text-white uppercase">{viewingTeam.nombre}</h3>
               </div>
+
               <button onClick={() => setTeamModalOpen(false)} className="text-gray-400 hover:text-white p-1 transition"><X size={20}/></button>
             </div>
             
