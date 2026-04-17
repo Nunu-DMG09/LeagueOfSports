@@ -7,4 +7,5 @@ export interface UserRepository {
   update(id: number, user: Partial<User>): Promise<void>;
   delete(id: number): Promise<void>;
   findAll(): Promise<any[]>;
+  addPoints(userId: number, points: number): Promise<void>;
 }
