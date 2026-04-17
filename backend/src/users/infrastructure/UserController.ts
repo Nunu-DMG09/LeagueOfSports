@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { UserRepository } from '../domain/UserRepository';
 import { RegisterUserUseCase } from '../application/RegisterUserUseCase';
 import { UpdateUserUseCase } from '../application/UpdateUserUseCase';
 import { DeleteUserUseCase } from '../application/DeleteUserUseCase';
@@ -7,7 +8,8 @@ export class UserController {
   constructor(
     private registerUseCase: RegisterUserUseCase,
     private updateUseCase: UpdateUserUseCase,
-    private deleteUseCase: DeleteUserUseCase
+    private deleteUseCase: DeleteUserUseCase,
+    private userRepository: UserRepository
   ) {}
 
   async create(req: Request, res: Response) {
@@ -44,6 +46,24 @@ export class UserController {
       // Como es simple, usamos el repositorio directamente para no hacer un Caso de Uso redundante
       const users = await this.registerUseCase['userRepository'].findAll();
       res.json(users);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async assignPoints(req: Request, res: Response) {
+    try {
+      const userId = Number(req.params.id);
+      const { puntos } = req.body;
+
+      if (isNaN(userId) || isNaN(puntos)) {
+        return res.status(400).json({ error: 'Datos inválidos. Verifica el ID o los puntos.' });
+      }
+
+      // Llamamos directamente al repositorio (o a tu UseCase si usas uno para usuarios)
+      await this.userRepository.addPoints(userId, Number(puntos));
+      
+      res.json({ message: `Se asignaron ${puntos} puntos correctamente` });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
