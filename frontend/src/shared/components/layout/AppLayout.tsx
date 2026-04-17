@@ -37,6 +37,8 @@ export default function AppLayout() {
     document.documentElement.classList.toggle('light-theme');
   };
 
+  const isAdminOrSuperAdmin = currentUser?.id_rol === 2 || currentUser?.id_rol === 3;
+
   const navItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { 
@@ -57,7 +59,9 @@ export default function AppLayout() {
       name: 'Invocadores', icon: Users, 
       subItems: [
         { name: 'Invocadores', path: '/users' },
-        { name: 'Salón de la Fama', path: '/hall-of-fame' }
+        { name: 'Salón de la Fama', path: '/hall-of-fame' },
+        // Añadimos Puntos Invocadores solo para admins (rol 2 ó 3)
+        ...(isAdminOrSuperAdmin ? [{ name: 'Puntos Invocadores', path: '/summoner-points' }] : [])
       ]
     },
     { name: 'Tienda de Puntos', icon: Gift, path: '/rewards' },
