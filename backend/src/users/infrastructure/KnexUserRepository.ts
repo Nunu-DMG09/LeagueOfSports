@@ -29,4 +29,10 @@ export class KnexUserRepository implements UserRepository {
       .select('id_usuario', 'nickname', 'elo', 'puntos_totales', 'estado', 'fecha_registro')
       .orderBy('puntos_totales', 'desc');
   }
+
+  async addPoints(userId: number, points: number): Promise<void> {
+    await db('usuarios')
+      .where({ id_usuario: userId })
+      .increment('puntos_totales', points);
+  }
 }
