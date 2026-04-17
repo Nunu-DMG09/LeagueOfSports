@@ -19,6 +19,7 @@ import MatchManageView from '../features/matches/components/MatchManageView';
 
 import RewardsView from '../features/rewards/components/RewardsView';
 import RequirePermission from '../shared/components/RequirePermission';
+import AssignPointsView from '../features/users/components/AssignPointsView';
 
 export const router = createBrowserRouter([
   {
@@ -58,7 +59,11 @@ export const router = createBrowserRouter([
         path: 'users/new', 
         element: <RequirePermission permission="users"><UserCreateView /></RequirePermission> 
       },
-      
+      { 
+        path: 'summoner-points', 
+        element: <RequirePermission permission="users"><AssignPointsView /></RequirePermission> 
+      }
+
     ],
   },
 ]);
