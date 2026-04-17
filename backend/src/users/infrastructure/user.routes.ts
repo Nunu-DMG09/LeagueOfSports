@@ -5,16 +5,20 @@ import { UpdateUserUseCase } from '../application/UpdateUserUseCase';
 import { DeleteUserUseCase } from '../application/DeleteUserUseCase';
 import { UserController } from './UserController';
 
+
 const router = Router();
+const userRepository = new KnexUserRepository();
 const repo = new KnexUserRepository();
 
 const controller = new UserController(
   new RegisterUserUseCase(repo),
   new UpdateUserUseCase(repo),
-  new DeleteUserUseCase(repo)
+  new DeleteUserUseCase(repo),
+  userRepository
 );
 router.get('/', controller.getAll.bind(controller));
 router.post('/', controller.create.bind(controller));
+router.put('/:id/points', controller.assignPoints.bind(controller));
 router.put('/:id', controller.update.bind(controller));
 router.delete('/:id', controller.delete.bind(controller));
 
