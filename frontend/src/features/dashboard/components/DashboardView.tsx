@@ -34,61 +34,83 @@ export default function DashboardView() {
 
   useEffect(() => { fetchDashboardData(); }, []);
 
-  if (loading) return <div className="flex h-full items-center justify-center"><div className="text-lg lg:text-xl text-ls-primary animate-pulse font-bold flex flex-col items-center gap-4"><Zap size={48} className="animate-bounce" /> Cargando Centro de Mando...</div></div>;
+  if (loading) return (
+    <div className="flex h-full items-center justify-center bg-[#0a0a0c]">
+      <div className="text-lg lg:text-xl text-ls-cyan animate-pulse font-bold flex flex-col items-center gap-4">
+        <Zap size={48} className="animate-bounce text-[#0bc6e3] drop-shadow-[0_0_15px_rgba(11,198,227,0.8)]" /> 
+        Cargando Núcleo Hextech...
+      </div>
+    </div>
+  );
 
   return (
-    <div className="space-y-6 lg:space-y-8 pb-10">
+    <div className="space-y-6 lg:space-y-8 pb-10 relative">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-ls-primary/5 via-[#0a0a0c]/0 to-transparent pointer-events-none -z-10"></div>
       
-      {/* HEADER Y ACCIONES RÁPIDAS (Responsive) */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-800 pb-4">
+      {/* HEADER Y ACCIONES RÁPIDAS */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-800/60 pb-5">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white flex items-center gap-2">
-            <LayoutDashboard className="text-ls-primary shrink-0" size={28} /> Centro de Comando
+          <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-ls-primary/20 to-transparent rounded-lg border border-ls-primary/30 shadow-[0_0_15px_rgba(11,198,227,0.15)]">
+              <LayoutDashboard className="text-[#0bc6e3] shrink-0" size={24} />
+            </div>
+            <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent drop-shadow-sm">
+              Centro de Comando
+            </span>
           </h1>
-          <p className="text-gray-400 text-xs md:text-sm mt-1">Visión global de League of Sports</p>
+          <p className="text-[#a0aec0] text-xs md:text-sm mt-2 font-medium tracking-wide">Visión global e inteligencia de League of Sports</p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <button onClick={() => navigate('/tournaments/new')} className="flex items-center gap-2 rounded bg-ls-gold/10 border border-ls-gold/30 px-3 py-2 text-xs lg:text-sm font-bold text-ls-gold hover:bg-ls-gold/20 transition whitespace-nowrap">
-            <Trophy size={16} /> Nuevo Torneo
+        <div className="flex flex-wrap gap-3">
+          <button onClick={() => navigate('/tournaments/new')} className="group flex items-center gap-2 rounded bg-gradient-to-b from-[#c8aa6e]/10 to-transparent border border-[#c8aa6e]/40 px-4 py-2 text-xs lg:text-sm font-bold text-[#c8aa6e] hover:bg-[#c8aa6e]/20 hover:border-[#c8aa6e] hover:shadow-[0_0_15px_rgba(200,170,110,0.3)] transition-all duration-300 whitespace-nowrap">
+            <Trophy size={16} className="group-hover:scale-110 transition-transform" /> Nuevo Torneo
           </button>
-          <button onClick={() => navigate('/users/new')} className="flex items-center gap-2 rounded bg-ls-primary/10 border border-ls-primary/30 px-3 py-2 text-xs lg:text-sm font-bold text-ls-primary hover:bg-ls-primary/20 transition whitespace-nowrap">
-            <PlusCircle size={16} /> Invocador
+          <button onClick={() => navigate('/users/new')} className="group flex items-center gap-2 rounded bg-gradient-to-b from-ls-primary/10 to-transparent border border-ls-primary/40 px-4 py-2 text-xs lg:text-sm font-bold text-ls-primary hover:bg-ls-primary/20 hover:border-ls-primary hover:shadow-[0_0_15px_rgba(11,198,227,0.3)] transition-all duration-300 whitespace-nowrap">
+            <PlusCircle size={16} className="group-hover:scale-110 transition-transform" /> Invocador
           </button>
-          <button onClick={() => fetchDashboardData()} className="flex items-center gap-2 rounded bg-gray-800 border border-gray-700 px-3 py-2 text-xs lg:text-sm font-bold text-white hover:bg-gray-700 transition whitespace-nowrap">
-            <Zap size={16} className="text-blue-400" /> Refrescar
+          <button onClick={() => fetchDashboardData()} className="group flex items-center gap-2 rounded bg-gray-800/50 border border-gray-700/50 px-4 py-2 text-xs lg:text-sm font-bold text-gray-300 hover:text-white hover:bg-gray-700 hover:border-gray-500 transition-all duration-300 whitespace-nowrap shadow-sm">
+            <Zap size={16} className="text-[#0bc6e3] group-hover:rotate-12 transition-transform" /> Refrescar
           </button>
         </div>
       </div>
 
       {/* METRICAS PRINCIPALES Y MVP */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 xl:grid-cols-5">
-        <div className="lg:col-span-1 xl:col-span-1 rounded-xl border border-ls-gold bg-gradient-to-br from-gray-900 to-gray-800 p-6 shadow-[0_0_20px_rgba(200,170,110,0.15)] flex flex-col items-center justify-center relative overflow-hidden group">
-          <Crown size={120} className="absolute -right-4 -bottom-4 text-ls-gold opacity-5 group-hover:scale-110 transition-transform duration-500" />
-          <p className="text-[10px] lg:text-xs text-ls-gold uppercase tracking-widest mb-3 font-bold z-10 flex items-center gap-2 bg-ls-gold/10 px-3 py-1 rounded-full border border-ls-gold/20">
-            <Crown size={14} /> MVP Global
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-4 xl:grid-cols-5">
+        {/* TARJETA MVP - Estilo Challenger/Hextech */}
+        <div className="lg:col-span-1 xl:col-span-1 rounded-xl border border-[#c8aa6e]/50 bg-gradient-to-b from-[#1a1c23] to-[#0a0a0c] p-6 shadow-[0_0_30px_rgba(200,170,110,0.15)] flex flex-col items-center justify-center relative overflow-hidden group hover:shadow-[0_0_40px_rgba(200,170,110,0.25)] transition-all duration-500">
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay pointer-events-none"></div>
+          <Crown size={140} className="absolute -right-6 -bottom-6 text-[#c8aa6e] opacity-5 group-hover:scale-110 group-hover:opacity-10 transition-all duration-700" />
+          <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-transparent via-[#c8aa6e] to-transparent opacity-50"></div>
+          
+          <p className="text-[10px] lg:text-xs text-[#c8aa6e] uppercase tracking-widest mb-4 font-black z-10 flex items-center gap-2 bg-[#c8aa6e]/10 px-4 py-1.5 rounded-full border border-[#c8aa6e]/30 shadow-inner backdrop-blur-sm">
+            <Crown size={14} className="animate-pulse" /> MVP GLOBAL
           </p>
-          <h3 className="text-2xl lg:text-3xl font-black text-white z-10 text-center break-all">{data.topPlayer.nickname || 'N/A'}</h3>
-          <p className="text-xs lg:text-sm text-gray-400 z-10 mb-4">{data.topPlayer.elo}</p>
-          <div className="bg-black/50 px-4 py-2 rounded-lg border border-gray-700 z-10 flex items-center gap-2 shadow-inner">
-            <Star size={16} className="text-ls-gold fill-ls-gold shrink-0" />
-            <span className="font-black text-ls-gold text-base lg:text-lg whitespace-nowrap">{data.topPlayer.puntos_totales} Pts</span>
+          <h3 className="text-3xl lg:text-4xl font-black bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent z-10 text-center break-all drop-shadow-md">
+            {data.topPlayer.nickname || 'N/A'}
+          </h3>
+          <p className="text-xs lg:text-sm font-bold text-[#a0aec0] uppercase tracking-widest z-10 my-3">{data.topPlayer.elo}</p>
+          <div className="bg-[#0a0a0c]/80 backdrop-blur-md px-5 py-2.5 rounded-lg border border-[#c8aa6e]/30 z-10 flex items-center gap-3 shadow-[inset_0_0_10px_rgba(0,0,0,0.8)]">
+            <Star size={18} className="text-[#c8aa6e] fill-[#c8aa6e] shrink-0 drop-shadow-[0_0_5px_rgba(200,170,110,0.8)]" />
+            <span className="font-black text-[#c8aa6e] text-lg lg:text-xl whitespace-nowrap tracking-tight">{data.topPlayer.puntos_totales} Pts</span>
           </div>
         </div>
 
-        <div className="lg:col-span-3 xl:col-span-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {/* STATS RAPIDAS */}
+        <div className="lg:col-span-3 xl:col-span-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
           {[
-            { title: 'Invocadores', value: data.stats.invocadores, icon: Users, color: 'text-ls-primary', bg: 'bg-ls-primary/10', border: 'border-ls-primary/20' },
-            { title: 'Equipos', value: data.stats.equipos, icon: Shield, color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
-            { title: 'Torneos', value: data.stats.torneos_activos, icon: Trophy, color: 'text-ls-gold', bg: 'bg-ls-gold/10', border: 'border-ls-gold/20' },
-            { title: 'Bajas (Kills)', value: data.stats.kills_totales, icon: Crosshair, color: 'text-ls-danger', bg: 'bg-ls-danger/10', border: 'border-ls-danger/20' },
+            { title: 'Invocadores', value: data.stats.invocadores, icon: Users, color: 'text-[#0bc6e3]', borderColor: 'border-[#0bc6e3]', shadow: 'shadow-[#0bc6e3]/10', glow: 'from-[#0bc6e3]/10' },
+            { title: 'Equipos', value: data.stats.equipos, icon: Shield, color: 'text-[#a855f7]', borderColor: 'border-[#a855f7]', shadow: 'shadow-[#a855f7]/10', glow: 'from-[#a855f7]/10' },
+            { title: 'Torneos', value: data.stats.torneos_activos, icon: Trophy, color: 'text-[#c8aa6e]', borderColor: 'border-[#c8aa6e]', shadow: 'shadow-[#c8aa6e]/10', glow: 'from-[#c8aa6e]/10' },
+            { title: 'Bajas (Kills)', value: data.stats.kills_totales, icon: Crosshair, color: 'text-[#ef4444]', borderColor: 'border-[#ef4444]', shadow: 'shadow-[#ef4444]/10', glow: 'from-[#ef4444]/10' },
           ].map((stat, i) => (
-            <div key={i} className="flex flex-col justify-center rounded-xl border border-gray-800 bg-ls-surface p-4 lg:p-5 shadow-lg relative overflow-hidden">
-              <div className={`absolute -right-4 -top-4 w-20 h-20 rounded-full ${stat.bg} blur-2xl`}></div>
+            <div key={i} className={`flex flex-col justify-center rounded-xl border-y border-r border-gray-800/50 border-l-4 ${stat.borderColor} bg-gradient-to-br from-[#121418] to-[#0a0a0c] p-5 shadow-lg ${stat.shadow} relative overflow-hidden group hover:-translate-y-1 hover:shadow-xl transition-all duration-300`}>
+              <div className={`absolute -right-8 -top-8 w-24 h-24 rounded-full bg-gradient-to-br ${stat.glow} to-transparent blur-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-500`}></div>
               <div className="flex items-center gap-4">
-                <div className={`rounded-lg p-3 border ${stat.bg} ${stat.border} ${stat.color}`}><stat.icon size={24} /></div>
+                <div className={`rounded-lg p-3 border border-gray-800 bg-[#0a0a0c]/50 backdrop-blur-sm ${stat.color} shadow-inner group-hover:scale-110 transition-transform duration-300`}>
+                  <stat.icon size={26} className="drop-shadow-md" />
+                </div>
                 <div>
-                  <p className="text-[10px] lg:text-[11px] text-gray-400 uppercase tracking-wider font-bold">{stat.title}</p>
-                  <h3 className="text-2xl lg:text-3xl font-black text-white">{stat.value}</h3>
+                  <p className="text-[10px] lg:text-[11px] text-gray-400 uppercase tracking-widest font-bold">{stat.title}</p>
+                  <h3 className="text-2xl lg:text-3xl font-black text-white drop-shadow-sm">{stat.value}</h3>
                 </div>
               </div>
             </div>
@@ -96,22 +118,24 @@ export default function DashboardView() {
         </div>
       </div>
 
-      {/* SECCIÓN DE GRÁFICOS PRINCIPALES */}
+      {/* SECCIÓN DE GRÁFICOS PRINCIPALES - Slick Style */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-xl border border-gray-800 bg-ls-surface p-4 lg:p-5 shadow-lg flex flex-col w-full overflow-hidden">
-          <h3 className="mb-4 lg:mb-6 text-base lg:text-lg font-bold text-white flex items-center gap-2">
-            <TrendingUp className="text-ls-primary shrink-0" size={20} /> Partidas Diarias
+        <div className="rounded-xl border border-gray-800 bg-[#121418]/80 backdrop-blur-md p-4 lg:p-6 shadow-2xl flex flex-col w-full relative">
+          <div className="absolute top-0 left-4 w-12 h-[2px] bg-[#0bc6e3] rounded-full"></div>
+          <h3 className="mb-6 text-base lg:text-lg font-black text-white flex items-center gap-2 uppercase tracking-wide">
+            <TrendingUp className="text-[#0bc6e3] shrink-0 drop-shadow-[0_0_8px_rgba(11,198,227,0.5)]" size={20} /> 
+            Actividad de la Grieta
           </h3>
           <div className="flex-1 min-h-[250px] lg:min-h-[280px] w-full">
             {data.weeklyData.length === 0 ? (
-               <div className="h-full flex items-center justify-center text-gray-600 italic text-sm">Sin datos</div>
+               <div className="h-full flex items-center justify-center text-[#a0aec0] italic text-sm font-medium">Sin datos detectados en los radares</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data.weeklyData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#2d3748" vertical={false} />
-                  <XAxis dataKey="dia" stroke="#a0aec0" tick={{ fill: '#a0aec0', fontSize: 10 }} axisLine={false} tickLine={false} />
-                  <YAxis stroke="#a0aec0" allowDecimals={false} tick={{ fill: '#a0aec0', fontSize: 10 }} axisLine={false} tickLine={false} width={30} />
-                  <RechartsTooltip cursor={{fill: 'rgba(11, 198, 227, 0.1)'}} contentStyle={{ backgroundColor: '#1e2328', borderColor: '#0bc6e3', borderRadius: '8px', fontSize: '12px' }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#2d3748" vertical={false} opacity={0.4} />
+                  <XAxis dataKey="dia" stroke="#718096" tick={{ fill: '#a0aec0', fontSize: 11, fontWeight: 600 }} axisLine={false} tickLine={false} />
+                  <YAxis stroke="#718096" allowDecimals={false} tick={{ fill: '#a0aec0', fontSize: 11, fontWeight: 600 }} axisLine={false} tickLine={false} width={30} />
+                  <RechartsTooltip cursor={{fill: 'rgba(11,198,227,0.05)'}} contentStyle={{ backgroundColor: 'rgba(10,10,12,0.95)', borderColor: '#0bc6e3', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', backdropFilter: 'blur(4px)', boxShadow: '0 4px 15px rgba(0,0,0,0.5)' }} />
                   <Bar dataKey="partidas" fill="#0bc6e3" radius={[4, 4, 0, 0]} maxBarSize={40} />
                 </BarChart>
               </ResponsiveContainer>
@@ -119,20 +143,22 @@ export default function DashboardView() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-gray-800 bg-ls-surface p-4 lg:p-5 shadow-lg flex flex-col w-full overflow-hidden">
-          <h3 className="mb-4 lg:mb-6 text-base lg:text-lg font-bold text-white flex items-center gap-2">
-            <Medal className="text-ls-gold shrink-0" size={20} /> Top Equipos (Victorias)
+        <div className="rounded-xl border border-gray-800 bg-[#121418]/80 backdrop-blur-md p-4 lg:p-6 shadow-2xl flex flex-col w-full relative">
+          <div className="absolute top-0 left-4 w-12 h-[2px] bg-[#c8aa6e] rounded-full"></div>
+          <h3 className="mb-6 text-base lg:text-lg font-black text-white flex items-center gap-2 uppercase tracking-wide">
+            <Medal className="text-[#c8aa6e] shrink-0 drop-shadow-[0_0_8px_rgba(200,170,110,0.5)]" size={20} /> 
+            Top Equipos (Victorias)
           </h3>
           <div className="flex-1 min-h-[250px] lg:min-h-[280px] w-full">
             {data.topTeamsData.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-gray-600 italic text-sm">No hay victorias registradas</div>
+              <div className="h-full flex items-center justify-center text-[#a0aec0] italic text-sm font-medium">Buscando leyendas... sin victorias registradas</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data.topTeamsData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#2d3748" vertical={false} />
-                  <XAxis dataKey="nombre" stroke="#a0aec0" tick={{ fill: '#a0aec0', fontSize: 10 }} axisLine={false} tickLine={false} />
-                  <YAxis stroke="#a0aec0" allowDecimals={false} tick={{ fill: '#a0aec0', fontSize: 10 }} axisLine={false} tickLine={false} width={30} />
-                  <RechartsTooltip cursor={{fill: 'rgba(200, 170, 110, 0.1)'}} contentStyle={{ backgroundColor: '#1e2328', borderColor: '#c8aa6e', borderRadius: '8px', fontSize: '12px' }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#2d3748" vertical={false} opacity={0.4} />
+                  <XAxis dataKey="nombre" stroke="#718096" tick={{ fill: '#a0aec0', fontSize: 11, fontWeight: 600 }} axisLine={false} tickLine={false} />
+                  <YAxis stroke="#718096" allowDecimals={false} tick={{ fill: '#a0aec0', fontSize: 11, fontWeight: 600 }} axisLine={false} tickLine={false} width={30} />
+                  <RechartsTooltip cursor={{fill: 'rgba(200,170,110,0.05)'}} contentStyle={{ backgroundColor: 'rgba(10,10,12,0.95)', borderColor: '#c8aa6e', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', backdropFilter: 'blur(4px)', boxShadow: '0 4px 15px rgba(0,0,0,0.5)' }} />
                   <Bar dataKey="victorias" fill="#c8aa6e" radius={[4, 4, 0, 0]} maxBarSize={40} />
                 </BarChart>
               </ResponsiveContainer>
@@ -143,17 +169,20 @@ export default function DashboardView() {
 
       {/* SECCIÓN INFERIOR */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="col-span-1 rounded-xl border border-gray-800 bg-ls-surface p-4 lg:p-5 shadow-lg flex flex-col w-full overflow-hidden">
-          <h3 className="text-base lg:text-lg font-bold text-white flex items-center gap-2 mb-4 lg:mb-6"><Users className="text-purple-400 shrink-0" size={20} /> Invocadores por Liga</h3>
+        <div className="col-span-1 rounded-xl border border-gray-800 bg-[#121418]/80 backdrop-blur-md p-4 lg:p-6 shadow-xl flex flex-col w-full relative group">
+          <div className="absolute top-0 left-4 w-8 h-[2px] bg-[#a855f7] rounded-full transition-all group-hover:w-16 duration-300"></div>
+          <h3 className="text-base lg:text-lg font-black text-white flex items-center gap-2 mb-6 uppercase tracking-wide">
+            <Users className="text-[#a855f7] shrink-0" size={20} /> Distribución de Ligas
+          </h3>
           <div className="flex-1 min-h-[220px] w-full">
             {data.eloData.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-gray-600 italic text-sm">Sin datos</div>
+              <div className="h-full flex items-center justify-center text-gray-500 italic text-sm">Sin datos</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data.eloData} layout="vertical" margin={{ top: 0, right: 0, left: 10, bottom: 0 }}>
                   <XAxis type="number" hide />
-                  <YAxis dataKey="liga" type="category" axisLine={false} tickLine={false} tick={{ fill: '#a0aec0', fontSize: 10 }} width={70} />
-                  <RechartsTooltip cursor={{fill: 'rgba(168, 85, 247, 0.1)'}} contentStyle={{ backgroundColor: '#1e2328', borderColor: '#a855f7', fontSize: '12px' }} />
+                  <YAxis dataKey="liga" type="category" axisLine={false} tickLine={false} tick={{ fill: '#a0aec0', fontSize: 11, fontWeight: 600 }} width={70} />
+                  <RechartsTooltip cursor={{fill: 'rgba(168,85,247,0.05)'}} contentStyle={{ backgroundColor: 'rgba(10,10,12,0.95)', borderColor: '#a855f7', fontSize: '12px', fontWeight: 'bold', borderRadius: '8px' }} />
                   <Bar dataKey="cantidad" fill="#a855f7" radius={[0, 4, 4, 0]} barSize={15} />
                 </BarChart>
               </ResponsiveContainer>
@@ -161,53 +190,64 @@ export default function DashboardView() {
           </div>
         </div>
 
-        <div className="col-span-1 rounded-xl border border-gray-800 bg-ls-surface p-4 lg:p-5 shadow-lg flex flex-col justify-between w-full overflow-hidden">
-          <h3 className="mb-2 text-base lg:text-lg font-bold text-white flex items-center gap-2"><Trophy className="text-ls-primary shrink-0" size={20} /> Estatus Torneos</h3>
+        <div className="col-span-1 rounded-xl border border-gray-800 bg-[#121418]/80 backdrop-blur-md p-4 lg:p-6 shadow-xl flex flex-col justify-between w-full relative group">
+          <div className="absolute top-0 left-4 w-8 h-[2px] bg-[#0bc6e3] rounded-full transition-all group-hover:w-16 duration-300"></div>
+          <h3 className="mb-2 text-base lg:text-lg font-black text-white flex items-center gap-2 uppercase tracking-wide">
+            <Trophy className="text-[#0bc6e3] shrink-0" size={20} /> Estatus Torneos
+          </h3>
           <div className="h-[180px] w-full flex items-center justify-center mt-2">
             {data.pieData.length === 0 ? (
-              <p className="text-gray-600 italic text-sm">Vacío</p>
+              <p className="text-gray-500 italic text-sm">Vacío</p>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={data.pieData} innerRadius={50} outerRadius={75} paddingAngle={5} dataKey="value">
-                    {data.pieData.map((entry: any, index: number) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                  <Pie data={data.pieData} innerRadius={55} outerRadius={75} paddingAngle={6} dataKey="value" stroke="none">
+                    {data.pieData.map((entry: any, index: number) => <Cell key={`cell-${index}`} fill={entry.color} style={{ filter: `drop-shadow(0 0 5px ${entry.color}50)` }} />)}
                   </Pie>
-                  <RechartsTooltip contentStyle={{ backgroundColor: '#1e2328', borderColor: '#0bc6e3', fontSize: '12px' }} />
+                  <RechartsTooltip contentStyle={{ backgroundColor: 'rgba(10,10,12,0.95)', borderColor: '#0bc6e3', fontSize: '12px', borderRadius: '8px', fontWeight: 'bold', border: '1px solid rgba(11,198,227,0.3)' }} itemStyle={{ color: '#fff' }} />
                 </PieChart>
               </ResponsiveContainer>
             )}
           </div>
-          <div className="space-y-2 mt-4">
+          <div className="space-y-2 mt-4 relative z-10">
             {data.pieData.map((item: any, i: number) => (
-              <div key={i} className="flex justify-between items-center text-xs lg:text-sm p-2 rounded bg-ls-bg border border-gray-800">
-                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }}></span><span className="text-gray-300 font-medium truncate">{item.name}</span></div>
-                <span className="font-black text-white">{item.value}</span>
+              <div key={i} className="flex justify-between items-center text-xs lg:text-sm p-2.5 rounded-lg bg-[#0a0a0c]/60 border border-gray-800/80 hover:border-gray-700 transition-colors">
+                <div className="flex items-center gap-3">
+                  <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: item.color, boxShadow: `0 0 8px ${item.color}` }}></span>
+                  <span className="text-gray-300 font-medium truncate">{item.name}</span>
+                </div>
+                <span className="font-black text-white bg-gray-800 px-2 py-0.5 rounded">{item.value}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="col-span-1 rounded-xl border border-gray-800 bg-ls-surface p-4 lg:p-5 shadow-lg flex flex-col w-full overflow-hidden">
-          <div className="flex justify-between items-center border-b border-gray-800 pb-3 mb-3">
-            <h3 className="text-base lg:text-lg font-bold text-white flex items-center gap-2"><Gift className="text-green-400 shrink-0" size={20} /> Últimos Canjes</h3>
-            <button onClick={() => navigate('/rewards')} className="text-xs text-ls-primary hover:underline whitespace-nowrap ml-2">Ver Tienda</button>
+        <div className="col-span-1 rounded-xl border border-gray-800 bg-[#121418]/80 backdrop-blur-md p-4 lg:p-6 shadow-xl flex flex-col w-full relative">
+          <div className="absolute top-0 left-4 w-8 h-[2px] bg-[#10b981] rounded-full"></div>
+          <div className="flex justify-between items-center pb-4 mb-2">
+            <h3 className="text-base lg:text-lg font-black text-white flex items-center gap-2 uppercase tracking-wide">
+              <Gift className="text-[#10b981] shrink-0 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" size={20} /> Últimos Canjes
+            </h3>
+            <button onClick={() => navigate('/rewards')} className="text-xs font-bold text-[#0bc6e3] hover:text-white hover:underline whitespace-nowrap ml-2 transition-colors">Ver Tienda</button>
           </div>
-          <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-1">
+          <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-2">
             {data.recentRewards.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-gray-600 italic text-sm">Nadie ha canjeado premios aún.</div>
+              <div className="h-full flex items-center justify-center text-gray-500 italic text-sm font-medium">Arca de artesanía vacía.</div>
             ) : (
               data.recentRewards.map((reward: any, i: number) => (
-                <div key={i} className="flex justify-between items-center bg-gray-900/50 p-3 rounded-lg border border-gray-800 hover:border-gray-600 transition">
-                  <div className="flex items-center gap-2 lg:gap-3 overflow-hidden">
-                    <div className="bg-green-500/10 p-1.5 lg:p-2 rounded-full border border-green-500/20 shrink-0"><Gift size={14} className="text-green-400" /></div>
+                <div key={i} className="flex justify-between items-center bg-[#0a0a0c]/60 p-3 lg:p-3.5 rounded-lg border border-gray-800 hover:border-[#10b981]/40 hover:bg-[#10b981]/5 transition-all duration-300 group">
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    <div className="bg-[#10b981]/10 p-2 rounded-lg border border-[#10b981]/30 shrink-0 group-hover:scale-110 transition-transform"><Gift size={16} className="text-[#10b981]" /></div>
                     <div className="overflow-hidden">
-                      <p className="text-xs lg:text-sm font-bold text-white truncate">{reward.nickname}</p>
-                      <p className="text-[10px] lg:text-[11px] text-gray-400 truncate max-w-[100px] sm:max-w-[150px]">{reward.nombre_recompensa}</p>
+                      <p className="text-xs lg:text-sm font-black text-white truncate">{reward.nickname}</p>
+                      <p className="text-[10px] lg:text-[11px] font-medium text-[#a0aec0] truncate max-w-[120px] sm:max-w-[150px]">{reward.nombre_recompensa}</p>
                     </div>
                   </div>
                   <div className="text-right shrink-0 ml-2">
-                    <span className="text-[10px] lg:text-xs font-bold text-ls-danger flex items-center gap-1 justify-end">-{reward.cantidad_puntos} <Star size={10} className="fill-ls-danger" /></span>
-                    <p className="text-[9px] lg:text-[10px] text-gray-500 mt-1">{new Date(reward.fecha_movimiento).toLocaleDateString()}</p>
+                    <span className="text-[11px] lg:text-xs font-black text-[#ef4444] bg-[#ef4444]/10 px-2 py-0.5 rounded border border-[#ef4444]/20 flex items-center gap-1 justify-end">
+                      -{reward.cantidad_puntos} <Star size={10} className="fill-[#ef4444]" />
+                    </span>
+                    <p className="text-[9px] lg:text-[10px] font-bold text-gray-500 mt-1.5">{new Date(reward.fecha_movimiento).toLocaleDateString()}</p>
                   </div>
                 </div>
               ))
@@ -216,39 +256,51 @@ export default function DashboardView() {
         </div>
       </div>
 
-      {/* TABLA: ÚLTIMAS PARTIDAS */}
-      <div className="rounded-xl border border-gray-800 bg-ls-surface shadow-lg overflow-hidden mt-6 w-full">
-        <div className="p-4 lg:p-5 border-b border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gray-900/50">
-          <h3 className="text-base lg:text-lg font-bold text-white flex items-center gap-2"><Swords className="text-ls-danger shrink-0" size={20} /> Historial Oficial</h3>
-          <button onClick={() => navigate('/tournaments')} className="text-xs text-ls-primary hover:bg-ls-primary/20 border border-ls-primary/30 px-3 py-1.5 rounded bg-ls-primary/10 transition self-start sm:self-auto whitespace-nowrap">Ver Torneos</button>
+      {/* TABLA: ÚLTIMAS PARTIDAS - Glassmorphism Table */}
+      <div className="rounded-xl border border-gray-800 bg-[#121418]/80 backdrop-blur-md shadow-2xl overflow-hidden mt-8 w-full relative">
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#ef4444] to-transparent opacity-50"></div>
+        <div className="p-5 lg:p-6 border-b border-gray-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#0a0a0c]/50">
+          <h3 className="text-lg lg:text-xl font-black text-white flex items-center gap-2 uppercase tracking-wider">
+            <Swords className="text-[#ef4444] shrink-0 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]" size={24} /> Historial de la Grieta
+          </h3>
+          <button onClick={() => navigate('/tournaments')} className="group text-xs font-bold text-white hover:text-white border border-[#ef4444]/40 px-4 py-2 rounded bg-gradient-to-b from-[#ef4444]/20 to-transparent hover:from-[#ef4444]/30 hover:border-[#ef4444] transition-all duration-300 shadow-[0_0_10px_rgba(239,68,68,0.1)] self-start sm:self-auto whitespace-nowrap">
+            Ver Registro en Torneos
+          </button>
         </div>
         
-        {/* Este overflow-x-auto salva la vida en móviles */}
         <div className="overflow-x-auto w-full">
-          <table className="w-full text-left text-sm min-w-[600px]">
-            <thead className="bg-ls-bg text-gray-400 text-xs uppercase">
+          <table className="w-full text-left text-sm min-w-[600px] border-collapse">
+            <thead className="bg-[#0a0a0c] text-[#a0aec0] text-[11px] uppercase tracking-widest font-black">
               <tr>
-                <th className="px-4 lg:px-5 py-3">Fecha y Hora</th>
-                <th className="px-4 lg:px-5 py-3 text-right text-blue-400">Lado Azul</th>
-                <th className="px-4 lg:px-5 py-3 text-center">Enfrentamiento</th>
-                <th className="px-4 lg:px-5 py-3 text-red-400">Lado Rojo</th>
-                <th className="px-4 lg:px-5 py-3">Resultado Final</th>
+                <th className="px-5 lg:px-6 py-4 border-b border-gray-800">Fecha y Hora</th>
+                <th className="px-5 lg:px-6 py-4 text-right text-[#0bc6e3] border-b border-gray-800">Lado Océano</th>
+                <th className="px-5 lg:px-6 py-4 text-center border-b border-gray-800">Enfrentamiento</th>
+                <th className="px-5 lg:px-6 py-4 text-[#ef4444] border-b border-gray-800">Lado Infernal</th>
+                <th className="px-5 lg:px-6 py-4 border-b border-gray-800">Resolución</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-800">
+            <tbody className="divide-y divide-gray-800/60 font-medium">
               {data.latestMatchesList.length === 0 ? (
-                <tr><td colSpan={5} className="text-center py-8 text-gray-500 font-medium text-sm">No hay registros en el historial de la Grieta.</td></tr>
+                <tr><td colSpan={5} className="text-center py-10 text-gray-500 font-bold tracking-wide text-sm bg-[#0a0a0c]/40">Mundo en paz. Aún no se derrama primera sangre.</td></tr>
               ) : (
                 data.latestMatchesList.map((m: any) => (
-                  <tr key={m.id_partida} className="hover:bg-ls-bg/60 transition cursor-pointer">
-                    <td className="px-4 lg:px-5 py-4 text-gray-400 whitespace-nowrap text-xs lg:text-sm">
-                      <div className="flex items-center gap-1.5 lg:gap-2"><Clock size={14} className="text-gray-500 shrink-0"/> {new Date(m.fecha_partida).toLocaleString()}</div>
+                  <tr key={m.id_partida} className="hover:bg-gray-800/40 transition-colors duration-200 cursor-pointer group">
+                    <td className="px-5 lg:px-6 py-4.5 text-gray-400 whitespace-nowrap text-xs lg:text-sm">
+                      <div className="flex items-center gap-2"><Clock size={14} className="text-gray-500 shrink-0 group-hover:text-white transition-colors"/> {new Date(m.fecha_partida).toLocaleString()}</div>
                     </td>
-                    <td className={`px-4 lg:px-5 py-4 text-right font-bold text-sm lg:text-base whitespace-nowrap ${m.ganador === m.equipo_azul ? 'text-white' : 'text-gray-500'}`}>{m.equipo_azul}</td>
-                    <td className="px-4 lg:px-5 py-4 text-center font-black text-gray-700 text-xs lg:text-sm">VS</td>
-                    <td className={`px-4 lg:px-5 py-4 font-bold text-sm lg:text-base whitespace-nowrap ${m.ganador === m.equipo_rojo ? 'text-white' : 'text-gray-500'}`}>{m.equipo_rojo}</td>
-                    <td className="px-4 lg:px-5 py-4 whitespace-nowrap">
-                      {m.ganador ? <span className="px-2 lg:px-3 py-1 lg:py-1.5 bg-ls-success/10 text-ls-success rounded border border-ls-success/20 text-[10px] lg:text-xs font-bold shadow-sm">{m.ganador} Gana</span> : <span className="px-2 lg:px-3 py-1 lg:py-1.5 bg-gray-800 text-gray-400 rounded text-[10px] lg:text-xs border border-gray-700">En Espera</span>}
+                    <td className={`px-5 lg:px-6 py-4.5 text-right font-black text-sm lg:text-base whitespace-nowrap ${m.ganador === m.equipo_azul ? 'text-white drop-shadow-[0_0_8px_rgba(11,198,227,0.4)]' : 'text-gray-500'}`}>{m.equipo_azul}</td>
+                    <td className="px-5 lg:px-6 py-4.5 text-center font-black text-gray-700 text-xs lg:text-sm tracking-widest">VS</td>
+                    <td className={`px-5 lg:px-6 py-4.5 font-black text-sm lg:text-base whitespace-nowrap ${m.ganador === m.equipo_rojo ? 'text-white drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]' : 'text-gray-500'}`}>{m.equipo_rojo}</td>
+                    <td className="px-5 lg:px-6 py-4.5 whitespace-nowrap">
+                      {m.ganador ? 
+                        <span className="px-3 py-1.5 bg-[#10b981]/10 text-[#10b981] rounded border border-[#10b981]/30 text-[10px] lg:text-xs font-black shadow-[0_0_10px_rgba(16,185,129,0.15)] uppercase tracking-wider">
+                          VICTORIA {m.ganador}
+                        </span> 
+                        : 
+                        <span className="px-3 py-1.5 bg-gray-800 text-gray-400 rounded text-[10px] lg:text-xs border border-gray-700 font-bold uppercase tracking-wider">
+                          En Progreso
+                        </span>
+                      }
                     </td>
                   </tr>
                 ))
