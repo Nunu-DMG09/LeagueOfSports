@@ -13,98 +13,112 @@ export default function TeamsList() {
   const [editModal, setEditModal] = useState({ isOpen: false, team: null });
 
   return (
-    <div className="space-y-6 pb-10">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white uppercase tracking-tight">Equipos Competitivos</h1>
+    <div className="space-y-6 lg:space-y-8 pb-10 relative">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#c8aa6e]/5 via-transparent to-transparent pointer-events-none -z-10"></div>
+      
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-800/60 pb-5">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-widest bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent flex items-center gap-3">
+            <Shield className="text-[#c8aa6e] drop-shadow-[0_0_8px_rgba(200,170,110,0.5)]" size={32} /> Equipos Oficiales
+          </h1>
+          <p className="text-xs sm:text-sm font-bold tracking-widest text-[#a0aec0] mt-2 uppercase">Facciones listas para la gloria</p>
+        </div>
         {canManageTeams && (
-          <button onClick={() => navigate('/teams/new')} className="w-full sm:w-auto rounded-lg bg-ls-primary px-5 py-3 sm:py-2.5 text-sm font-bold text-ls-bg transition hover:bg-ls-primary-hover shadow-lg shadow-ls-primary/20">
-            + Registrar Equipo
+          <button onClick={() => navigate('/teams/new')} className="group relative w-full sm:w-auto overflow-hidden rounded-lg bg-gradient-to-r from-[#c8aa6e] to-[#a88a4e] px-6 py-3 sm:py-2.5 text-sm font-black uppercase tracking-widest text-[#0a0a0c] transition-all hover:shadow-[0_0_20px_rgba(200,170,110,0.4)] hover:-translate-y-1 block">
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              <Shield size={16} /> Registrar Escuadra
+            </span>
+            <div className="absolute inset-0 h-full w-full scale-0 rounded-lg bg-white opacity-20 transition-all duration-300 group-hover:scale-100"></div>
           </button>
         )}
       </div>
 
       {loading ? (
-        <div className="text-center text-gray-400 py-10 sm:py-20 animate-pulse text-sm sm:text-base">Cargando escuadras...</div>
+        <div className="flex h-40 items-center justify-center">
+          <div className="text-sm sm:text-base text-[#c8aa6e] animate-pulse font-black uppercase tracking-widest flex items-center gap-3">
+             <div className="w-4 h-4 rounded-full bg-[#c8aa6e] shadow-[0_0_10px_#c8aa6e] animate-ping"></div> Cargando estandartes...
+          </div>
+        </div>
       ) : teams.length === 0 ? (
-        <div className="text-center text-gray-400 py-10 sm:py-16 border border-ls-gold/20 rounded-xl bg-ls-surface shadow-lg text-sm sm:text-base mx-4 sm:mx-0">
-          No hay equipos fundados aún. ¡Crea el primero!
+        <div className="text-center text-[#a0aec0] font-bold uppercase tracking-widest py-14 sm:py-20 border border-dashed border-gray-700/50 rounded-xl bg-[#0a0a0c]/40 shadow-lg text-sm sm:text-base mx-4 sm:mx-0">
+          Ninguna orden se ha fundado aún. ¡Muestra tu bandera!
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {teams.map((team) => (
             <div 
               key={team.id_equipo} 
               onClick={() => navigate(`/teams/${team.id_equipo}`)}
-              className="group cursor-pointer relative overflow-hidden rounded-xl border border-ls-gold/20 bg-ls-surface transition-all duration-300 hover:border-ls-primary hover:-translate-y-1 hover:shadow-xl hover:shadow-ls-primary/20 flex flex-col"
+              className="group cursor-pointer relative overflow-hidden rounded-xl border border-gray-800/60 bg-[#121418]/90 backdrop-blur-md transition-all duration-300 hover:border-[#c8aa6e]/50 hover:-translate-y-1.5 hover:shadow-[0_10px_30px_rgba(200,170,110,0.15)] flex flex-col"
             >
               
-              {/* BOTONES DE ADMINISTRACIÓN (Visibles al pasar el mouse o en móvil) */}
+              {/* BOTONES DE ADMINISTRACIÓN */}
               {canManageTeams && (
-                <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900/60 p-1.5 rounded-lg backdrop-blur-sm">
+                <div className="absolute top-3 right-3 z-30 flex items-center gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity bg-[#0a0a0c]/80 p-1.5 rounded-lg backdrop-blur border border-gray-700/50 shadow-lg">
                   <button 
                     onClick={(e) => { e.stopPropagation(); setEditModal({ isOpen: true, team }); }} 
-                    className="p-1.5 bg-blue-500/20 text-blue-400 hover:bg-blue-500 hover:text-white rounded transition" 
+                    className="p-1.5 bg-[#0bc6e3]/10 text-[#0bc6e3] hover:bg-[#0bc6e3] hover:text-[#0a0a0c] rounded transition-colors" 
                     title="Editar Equipo"
                   >
                     <Edit size={16} />
                   </button>
                   <button 
                     onClick={(e) => { e.stopPropagation(); setDeleteModal({ isOpen: true, id: team.id_equipo, name: team.nombre }); }} 
-                    className="p-1.5 bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white rounded transition" 
-                    title="Eliminar Equipo"
+                    className="p-1.5 bg-[#ef4444]/10 text-[#ef4444] hover:bg-[#ef4444] hover:text-white rounded transition-colors" 
+                    title="Disolver Equipo"
                   >
                     <Trash2 size={16} />
                   </button>
                 </div>
               )}
 
-              {/* IMAGEN A PANTALLA COMPLETA DENTRO DEL RECUADRO SUPERIOR */}
-              <div className="h-32 sm:h-40 w-full overflow-hidden bg-gray-900 shrink-0 flex items-center justify-center">
+              {/* IMAGEN FABULOSA */}
+              <div className="h-36 sm:h-44 w-full relative overflow-hidden bg-[#0a0a0c] shrink-0 flex items-center justify-center">
+                {/* Overlay degradado negro abajo para fusionar imagen con el resto de la card */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#121418] via-transparent to-transparent z-20 pointer-events-none"></div>
                 {team.logo_url ? (
-                  <img 
-                    src={`${import.meta.env.VITE_API_URL}${team.logo_url}`} 
-                    alt={team.nombre} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
-                  />
+                  <>
+                    <div className="absolute inset-0 bg-[#c8aa6e]/10 mix-blend-overlay z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <img 
+                      src={`${import.meta.env.VITE_API_URL}${team.logo_url}`} 
+                      alt={team.nombre} 
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" 
+                    />
+                  </>
                 ) : (
-                  <Shield size={56} className="text-ls-gold opacity-30 transition-transform duration-500 group-hover:scale-110 group-hover:opacity-50" />
+                  <Shield size={64} className="text-[#c8aa6e] opacity-20 transition-transform duration-700 ease-out group-hover:scale-110 group-hover:opacity-40 group-hover:drop-shadow-[0_0_15px_rgba(200,170,110,0.5)] z-0" />
                 )}
               </div>
 
               {/* CONTENIDO DE LA TARJETA */}
-              <div className="border-t border-ls-gold/10 p-4 text-center flex-1 flex flex-col justify-center">
-                <h3 className="text-base sm:text-lg font-bold text-white truncate px-2 transition-colors group-hover:text-ls-primary" title={team.nombre}>{team.nombre}</h3>
-                <div className="mt-2">
-                  <span className={`inline-block rounded-full px-3 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider ${
-                    team.estado === 'activo' ? 'bg-ls-success/10 text-ls-success' : 
-                    team.estado === 'campeon' ? 'bg-ls-gold text-ls-bg shadow-[0_0_10px_rgba(200,170,110,0.5)]' :
-                    team.estado === 'descalificado' ? 'bg-gray-800 text-gray-500' : 'bg-ls-danger/10 text-ls-danger'
+              <div className="relative z-30 p-5 text-center flex-1 flex flex-col justify-start -mt-6">
+                <h3 className="text-lg sm:text-xl font-black text-white truncate px-2 transition-colors group-hover:text-[#c8aa6e] drop-shadow-md uppercase tracking-wider" title={team.nombre}>{team.nombre}</h3>
+                <div className="mt-3">
+                  <span className={`inline-block border px-3.5 py-1.5 text-[10px] sm:text-[11px] font-black uppercase tracking-widest ${
+                    team.estado === 'activo' ? 'bg-[#10b981]/10 text-[#10b981] border-[#10b981]/30 shadow-[0_0_10px_rgba(16,185,129,0.15)] rounded' : 
+                    team.estado === 'campeon' ? 'bg-gradient-to-r from-[#c8aa6e] to-[#a88a4e] text-[#0a0a0c] border-[#c8aa6e] shadow-[0_0_15px_rgba(200,170,110,0.5)] rounded' :
+                    team.estado === 'descalificado' ? 'bg-gray-800/80 text-gray-500 border-gray-700 rounded' : 'bg-[#ef4444]/10 text-[#ef4444] border-[#ef4444]/30 rounded'
                   }`}>
                     {team.estado}
                   </span>
                 </div>
               </div>
 
-              {/* BOTÓN INFERIOR (Ahora reacciona al hover de toda la tarjeta) */}
-              <div className="w-full bg-ls-bg/50 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-gray-400 transition-colors group-hover:bg-ls-primary group-hover:text-ls-bg uppercase tracking-widest mt-auto shrink-0 text-center">
-                Ver Miembros
-              </div>
+              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#c8aa6e]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-30"></div>
             </div>
           ))}
         </div>
       )}
 
       <ConfirmModal 
-        isOpen={deleteModal.isOpen}
-        title="Disolver Equipo"
-        message={`¿Estás seguro de disolver a la escuadra ${deleteModal.name}? Se perderán sus miembros, pero no podrás eliminarlo si ya tiene partidas en su historial.`}
+        isOpen={deleteModal.isOpen} title="Disolver Orden"
+        message={`¿Estás seguro de disolver a la escuadra ${deleteModal.name}? Se perderán sus miembros, pero no podrás eliminarlo si ya hay batallas en su historial.`}
         onCancel={() => setDeleteModal({ isOpen: false, id: 0, name: '' })}
         onConfirm={() => { confirmDelete(deleteModal.id); setDeleteModal({ isOpen: false, id: 0, name: '' }); }}
       />
-
+      
       <TeamEditModal 
-        isOpen={editModal.isOpen} 
-        team={editModal.team} 
+        isOpen={editModal.isOpen} team={editModal.team} 
         onClose={() => setEditModal({ isOpen: false, team: null })}
         onSuccess={() => { setEditModal({ isOpen: false, team: null }); fetchTeams(); }}
       />
