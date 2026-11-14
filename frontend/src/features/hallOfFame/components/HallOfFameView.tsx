@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Trophy, Star, Medal, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { Trophy, Star, Medal, ChevronLeft, ChevronRight, FileDown } from 'lucide-react';
 import { api } from '../../../shared/services/api';
 import { toast } from 'sonner';
 
@@ -7,7 +7,9 @@ export default function HallOfFameView() {
   const [ranking, setRanking] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isExporting, setIsExporting] = useState(false);
   const itemsPerPage = 10;
+  const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchRanking = async () => {
@@ -24,6 +26,208 @@ export default function HallOfFameView() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = ranking.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(ranking.length / itemsPerPage);
+
+  // ── Exportar / Imprimir PDF ──────────────────────────────────────────────
+  const handleExportPDF = () => {
+    setIsExporting(true);
+
+    // Pequeño delay para que el estado se refleje antes de abrir el diálogo
+    setTimeout(() => {
+      const printContent = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8" />
+          <title>Salón de la Meta — League Sports</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body {
+              font-family: 'Inter', Arial, sans-serif;
+              background: #fff;
+              color: #111;
+              padding: 36px 44px;
+            }
+            .header {
+              text-align: center;
+              border-bottom: 3px solid #c8aa6e;
+              padding-bottom: 20px;
+              margin-bottom: 28px;
+            }
+            .header .brand {
+              font-size: 13px;
+              font-weight: 700;
+              letter-spacing: 0.25em;
+              text-transform: uppercase;
+              color: #888;
+              margin-bottom: 6px;
+            }
+            .header h1 {
+              font-size: 32px;
+              font-weight: 900;
+              text-transform: uppercase;
+              letter-spacing: -0.02em;
+              color: #111;
+            }
+            .header h1 span { color: #c8aa6e; }
+            .header .subtitle {
+              margin-top: 6px;
+              font-size: 12px;
+              font-weight: 700;
+              letter-spacing: 0.2em;
+              text-transform: uppercase;
+              color: #999;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: 13px;
+            }
+            thead tr {
+              background: #0a0a0c;
+              color: #c8aa6e;
+            }
+            thead th {
+              padding: 12px 16px;
+              text-align: left;
+              font-size: 10px;
+              font-weight: 900;
+              letter-spacing: 0.2em;
+              text-transform: uppercase;
+            }
+            thead th.center { text-align: center; }
+            thead th.right  { text-align: right; }
+            tbody tr:nth-child(even) { background: #f7f7f7; }
+            tbody tr.top3 { background: #fffbf0; }
+            tbody td {
+              padding: 11px 16px;
+              border-bottom: 1px solid #e5e5e5;
+              vertical-align: middle;
+            }
+            .rank-cell { display: flex; align-items: center; gap: 10px; }
+            .rank-badge {
+              width: 32px; height: 32px;
+              border-radius: 6px;
+              border: 1.5px solid #ccc;
+              display: flex; align-items: center; justify-content: center;
+              font-weight: 900; font-size: 12px; color: #555;
+              flex-shrink: 0;
+            }
+            .rank-badge.gold   { border-color: #c8aa6e; color: #c8aa6e; background: #fffbf0; }
+            .rank-badge.silver { border-color: #aaa; color: #aaa; background: #f5f5f5; }
+            .rank-badge.bronze { border-color: #cd7f32; color: #cd7f32; background: #fff8f0; }
+            .nickname { font-weight: 900; font-size: 14px; }
+            .nickname.gold   { color: #b8860b; }
+            .nickname.silver { color: #555; }
+            .nickname.bronze { color: #cd7f32; }
+            .elo-badge {
+              display: inline-block;
+              background: #f0f0f0;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+              padding: 3px 10px;
+              font-size: 10px;
+              font-weight: 900;
+              letter-spacing: 0.15em;
+              text-transform: uppercase;
+              color: #333;
+            }
+            .elo-badge.gold { border-color: #c8aa6e; color: #b8860b; background: #fffbf0; }
+            .points {
+              text-align: right;
+              font-weight: 900;
+              font-size: 18px;
+              color: #111;
+            }
+            .points.gold { color: #c8aa6e; }
+            .footer {
+              margin-top: 32px;
+              text-align: center;
+              font-size: 10px;
+              color: #bbb;
+              font-weight: 700;
+              letter-spacing: 0.15em;
+              text-transform: uppercase;
+              border-top: 1px solid #eee;
+              padding-top: 16px;
+            }
+            .generated {
+              margin-top: 6px;
+              font-size: 10px;
+              color: #ccc;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <p class="brand">League Sports — Sistema de Torneos Centrales</p>
+            <h1>Salón de la <span>Meta</span></h1>
+            <p class="subtitle">Las máximas leyendas del reino</p>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th style="width:60px">Rango</th>
+                <th>Invocador</th>
+                <th class="center">Clasificatoria</th>
+                <th class="right">Esencia (Pts)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${ranking.map((player, i) => {
+                const isTop1 = i === 0;
+                const isTop2 = i === 1;
+                const isTop3 = i === 2;
+                const badgeClass = isTop1 ? 'gold' : isTop2 ? 'silver' : isTop3 ? 'bronze' : '';
+                const icon = isTop1 ? '🏆' : isTop2 ? '🥈' : isTop3 ? '🥉' : `#${i + 1}`;
+                return `
+                  <tr class="${i < 3 ? 'top3' : ''}">
+                    <td>
+                      <div class="rank-cell">
+                        <div class="rank-badge ${badgeClass}">${icon}</div>
+                      </div>
+                    </td>
+                    <td><span class="nickname ${badgeClass}">${player.nickname}</span></td>
+                    <td style="text-align:center">
+                      <span class="elo-badge ${isTop1 ? 'gold' : ''}">${player.elo}</span>
+                    </td>
+                    <td>
+                      <div class="points ${isTop1 ? 'gold' : ''}">${player.puntos_totales} ★</div>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+
+          <div class="footer">
+            ✦ La esencia se canaliza tras la caída de cada nexo ✦
+            <div class="generated">Generado el ${new Date().toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const printWindow = window.open('', '_blank', 'width=900,height=700');
+      if (printWindow) {
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.focus();
+        // Esperamos a que carguen las fuentes antes de imprimir
+        printWindow.onload = () => {
+          setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+          }, 400);
+        };
+      } else {
+        toast.error('No se pudo abrir la ventana de impresión. Permite las ventanas emergentes.');
+      }
+
+      setIsExporting(false);
+    }, 100);
+  };
 
   if (loading) return (
     <div className="flex h-[60vh] items-center justify-center">
@@ -49,26 +253,41 @@ export default function HallOfFameView() {
           <p className="text-[#0bc6e3] font-bold tracking-[0.3em] uppercase text-[10px] sm:text-[11px] drop-shadow-[0_0_5px_rgba(11,198,227,0.5)]">Las máximas leyendas del reino</p>
           <div className="w-12 sm:w-24 h-[1px] bg-gradient-to-l from-transparent to-[#c8aa6e]/50"></div>
         </div>
+
+        {/* BOTÓN EXPORTAR PDF */}
+        <div className="mt-5 flex justify-center">
+          <button
+            onClick={handleExportPDF}
+            disabled={isExporting || ranking.length === 0}
+            className="group/pdf relative inline-flex items-center gap-2.5 overflow-hidden rounded-lg border border-[#c8aa6e]/50 bg-[#121418] px-5 py-2.5 text-[11px] font-black uppercase tracking-widest text-[#c8aa6e] transition-all duration-300 hover:border-[#c8aa6e] hover:bg-[#c8aa6e]/10 hover:shadow-[0_0_20px_rgba(200,170,110,0.25)] disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <FileDown
+              size={16}
+              className="shrink-0 transition-transform duration-300 group-hover/pdf:-translate-y-0.5 group-hover/pdf:translate-x-0.5"
+            />
+            {isExporting ? 'Generando...' : 'Exportar a PDF'}
+            <div className="absolute inset-0 h-full w-full scale-0 rounded-lg bg-[#c8aa6e] opacity-5 transition-all duration-300 group-hover/pdf:scale-100"></div>
+          </button>
+        </div>
       </div>
 
       {/* TABLA ESTILO HEX TECH GOLD */}
-      <div className="overflow-x-auto rounded-xl border border-[#c8aa6e]/30 bg-[#121418]/80 backdrop-blur-xl shadow-[0_0_40px_rgba(0,0,0,0.8)] mx-1 sm:mx-0 relative">
+      <div ref={printRef} className="overflow-x-auto rounded-xl border border-[#c8aa6e]/30 bg-[#121418]/80 backdrop-blur-xl shadow-[0_0_40px_rgba(0,0,0,0.8)] mx-1 sm:mx-0 relative">
         <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#c8aa6e] to-transparent opacity-70"></div>
         
-        <div className="min-w-[700px]">
+        <div className="min-w-[520px]">
           <table className="w-full text-left">
             <thead className="bg-[#0a0a0c]/80 text-[#c8aa6e] uppercase text-[10px] sm:text-[11px] font-black tracking-widest border-b border-[#c8aa6e]/20">
               <tr>
                 <th className="px-5 sm:px-6 py-4 lg:py-5">Rango</th>
                 <th className="px-5 sm:px-6 py-4 lg:py-5">Invocador</th>
-                <th className="px-5 sm:px-6 py-4 lg:py-5 text-center bg-[#0a0a0c]/40 text-[#a0aec0]">K / D / A</th>
                 <th className="px-5 sm:px-6 py-4 lg:py-5 text-center">Clasificatoria</th>
                 <th className="px-5 sm:px-6 py-4 lg:py-5 text-right">Esencia (Pts)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800/60 text-sm sm:text-base">
               {ranking.length === 0 ? (
-                <tr><td colSpan={5} className="text-center py-16 text-[#a0aec0] font-bold uppercase tracking-widest text-xs italic bg-[#0a0a0c]/20">El panteón está vacío.</td></tr>
+                <tr><td colSpan={4} className="text-center py-16 text-[#a0aec0] font-bold uppercase tracking-widest text-xs italic bg-[#0a0a0c]/20">El panteón está vacío.</td></tr>
               ) : (
                 currentItems.map((player, index) => {
                   const globalIndex = indexOfFirstItem + index;
@@ -100,15 +319,6 @@ export default function HallOfFameView() {
                           isTop2 ? 'text-gray-200 text-lg sm:text-xl' :
                           isTop3 ? 'text-orange-300 text-base sm:text-lg' : 'text-white group-hover:text-[#0bc6e3]'
                         }`}>{player.nickname}</span>
-                      </td>
-                      <td className="px-5 sm:px-6 py-4 lg:py-5 text-center font-black bg-[#0a0a0c]/20 rounded-lg">
-                        <div className="inline-flex gap-2.5 items-center justify-center bg-[#0a0a0c] px-4 py-1.5 rounded border border-gray-800 shadow-inner">
-                          <span className="text-[#10b981] drop-shadow-[0_0_5px_rgba(16,185,129,0.3)]">{player.total_kills}</span> 
-                          <span className="text-gray-600 font-normal">/</span> 
-                          <span className="text-[#ef4444] drop-shadow-[0_0_5px_rgba(239,68,68,0.3)]">{player.total_deaths}</span> 
-                          <span className="text-gray-600 font-normal">/</span> 
-                          <span className="text-[#0bc6e3] drop-shadow-[0_0_5px_rgba(11,198,227,0.3)]">{player.total_assists}</span>
-                        </div>
                       </td>
                       <td className="px-5 sm:px-6 py-4 lg:py-5 text-center">
                         <span className={`rounded-sm bg-[#0a0a0c] border border-gray-700/50 px-3 py-1.5 text-[10px] sm:text-xs font-black uppercase tracking-widest shadow-inner inline-block ${

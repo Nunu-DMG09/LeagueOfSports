@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import LoginView from '../features/auth/components/LoginView';
+import CountdownView from '../features/countdown/components/CountdownView';
 import DashboardView from '../features/dashboard/components/DashboardView';
 import AppLayout from '../shared/components/layout/AppLayout';
 import UsersList from '../features/users/components/UsersList';
@@ -22,10 +23,17 @@ import RequirePermission from '../shared/components/RequirePermission';
 import AssignPointsView from '../features/users/components/AssignPointsView';
 
 export const router = createBrowserRouter([
+  // ── Pantalla pública de bienvenida / cuenta regresiva ──
   {
     path: '/',
+    element: <CountdownView />,
+  },
+  // ── Inicio de sesión ──
+  {
+    path: '/login',
     element: <LoginView />,
   },
+  // ── Layout principal (autenticado) ──
   {
     path: '/',
     element: <AppLayout />, 
