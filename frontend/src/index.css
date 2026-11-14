@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Paleta League of Sports */
+  /* Paleta League of Sports (Dark Default) */
   --color-ls-bg: #0a0a0c;        /* Fondo principal oscuro (Void) */
   --color-ls-surface: #1e2328;   /* Fondo para tarjetas/paneles */
   --color-ls-primary: #0bc6e3;   /* Celeste Hextech brillante */
@@ -12,29 +12,298 @@
   --color-ls-success: #12b279;   /* Verde para victorias */
 }
 
-/* Estilos globales básicos */
+/* ── Estilos globales básicos ──────────────────────────── */
 body {
   background-color: var(--color-ls-bg);
   color: white;
   font-family: ui-sans-serif, system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* ── Scrollbar delgado y moderno ───────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background-color: rgba(100,100,100,0.4); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background-color: rgba(100,100,100,0.8); }
 
-/* Estilos para un Scrollbar delgado y moderno */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ── Animaciones de entrada (compatibles con Tailwind v4) ─ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes zoomIn95 {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(200,170,110,0.2); }
+  50%       { box-shadow: 0 0 25px rgba(200,170,110,0.5); }
+}
+@keyframes glowPulseCyan {
+  0%, 100% { box-shadow: 0 0 10px rgba(11,198,227,0.2); }
+  50%       { box-shadow: 0 0 25px rgba(11,198,227,0.5); }
+}
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+/* ── Clases de utilidad de animación ───────────────────── */
+.animate-in            { animation: fadeIn 0.2s ease-out both; }
+.fade-in               { animation-name: fadeIn; }
+.zoom-in-95            { animation-name: zoomIn95; }
+.fade-in-up            { animation: fadeInUp 0.4s ease-out both; }
+.duration-200          { animation-duration: 0.2s; }
+.duration-300          { animation-duration: 0.3s; }
+.duration-400          { animation-duration: 0.4s; }
+
+/* Stagger helpers para listas de tarjetas */
+.stagger-1  { animation-delay: 60ms;  }
+.stagger-2  { animation-delay: 120ms; }
+.stagger-3  { animation-delay: 180ms; }
+.stagger-4  { animation-delay: 240ms; }
+
+/* ── Shimmer decorativo ────────────────────────────────── */
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  animation: shimmer 2.5s infinite;
 }
 
-::-webkit-scrollbar-thumb {
-  background-color: rgba(100, 100, 100, 0.4);
-  border-radius: 10px;
+/* ── Glow helpers ──────────────────────────────────────── */
+.glow-gold { animation: glowPulse 2.5s ease-in-out infinite; }
+.glow-cyan { animation: glowPulseCyan 2.5s ease-in-out infinite; }
+
+/* ── Transición suave de página ───────────────────────── */
+.page-enter {
+  animation: fadeInUp 0.35s ease-out both;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(100, 100, 100, 0.8);
+/* ── Estilo para inputs date oscuros ───────────────────── */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.6);
+  cursor: pointer;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  filter: invert(0.9);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SISTEMA DE TEMA CLARO (LIGHT MODE) — PALETA MARFIL & ORO NOBLE HEX TECH
+   No modifica ni altera el tema oscuro (Dark Mode permanece 100% intacto).
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.light-theme {
+  --color-ls-bg: #f6f4ed;
+  --color-ls-surface: #ffffff;
+  --color-ls-primary: #0284c7;
+  --color-ls-primary-hover: #0369a1;
+  --color-ls-gold: #8c6820;
+  --color-ls-gold-hover: #735316;
+  --color-ls-danger: #b91c1c;
+  --color-ls-success: #047857;
+  color-scheme: light;
+}
+
+.light-theme body {
+  background-color: #f6f4ed !important;
+  color: #1a1e23 !important;
+}
+
+/* ── 1. Fondo de tarjetas, paneles y superficies principales ──────────── */
+.light-theme [class*="bg-[#121418]"],
+.light-theme [class*="bg-[#1a1c23]"] {
+  background-color: #ffffff !important;
+  border-color: rgba(200, 170, 110, 0.35) !important;
+  box-shadow: 0 4px 20px -2px rgba(160, 130, 70, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* ── 2. Fondos secundarios, subpaneles y contenedores oscuros ─────────── */
+.light-theme [class*="bg-[#0a0a0c]"] {
+  background-color: #f7f5ed !important;
+  border-color: #e5ded2 !important;
+}
+
+.light-theme [class*="bg-gray-900"] {
+  background-color: #f3efe5 !important;
+  color: #1a1e23 !important;
+  border-color: #e0d8ca !important;
+}
+
+.light-theme [class*="bg-gray-800"] {
+  background-color: #ebe5d8 !important;
+  color: #1a1e23 !important;
+  border-color: #ded5c5 !important;
+}
+
+/* ── 3. Gradientes de fondo adaptados al tema claro ───────────────────── */
+.light-theme [class*="from-[#121418]"],
+.light-theme [class*="from-[#1a1c23]"] {
+  --tw-gradient-from: #ffffff !important;
+}
+
+.light-theme [class*="to-[#0a0a0c]"],
+.light-theme [class*="to-[#121418]"] {
+  --tw-gradient-to: #f6f3eb !important;
+}
+
+.light-theme [class*="from-[#0a0a0c]"] {
+  --tw-gradient-from: #f8f6f0 !important;
+}
+
+/* ── 4. Tipografías y textos con alto contraste y legibilidad ─────────── */
+.light-theme [class*="text-white"] {
+  color: #16191d !important;
+}
+
+.light-theme [class*="text-gray-200"],
+.light-theme [class*="text-gray-300"] {
+  color: #2b333e !important;
+}
+
+.light-theme [class*="text-gray-400"],
+.light-theme [class*="text-gray-500"],
+.light-theme [class*="text-[#a0aec0]"] {
+  color: #556274 !important;
+}
+
+/* Acentos dorados enriquecidos para contraste sobre fondo claro */
+.light-theme [class*="text-[#c8aa6e]"] {
+  color: #8c6820 !important;
+}
+
+/* Acentos celestes hextech con suficiente contraste */
+.light-theme [class*="text-[#0bc6e3]"] {
+  color: #0284c7 !important;
+}
+
+/* Acentos de éxito y peligro */
+.light-theme [class*="text-[#10b981]"] {
+  color: #047857 !important;
+}
+
+.light-theme [class*="text-[#ef4444]"] {
+  color: #b91c1c !important;
+}
+
+.light-theme [class*="text-[#60a5fa]"] {
+  color: #1d4ed8 !important;
+}
+
+.light-theme [class*="text-[#f87171]"] {
+  color: #c2410c !important;
+}
+
+.light-theme [class*="text-[#a855f7]"] {
+  color: #7e22ce !important;
+}
+
+/* Preservar texto oscuro en botones primarios y acentos */
+.light-theme [class*="text-[#0a0a0c]"] {
+  color: #0a0a0c !important;
+}
+
+/* ── 5. Títulos con degradados dorados adaptados a fondo claro ────────── */
+.light-theme h1[class*="bg-gradient-to-b"],
+.light-theme h2[class*="bg-gradient-to-b"] {
+  background-image: linear-gradient(to bottom, #1a1e23 0%, #8c6820 60%, #574013 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+}
+
+/* ── 6. Bordes y divisores elegantes ─────────────────────────────────── */
+.light-theme [class*="border-gray-800"],
+.light-theme [class*="border-gray-700"] {
+  border-color: #e2dbce !important;
+}
+
+.light-theme [class*="divide-gray-800"] > * + * {
+  border-color: #e5ded2 !important;
+}
+
+/* ── 7. Tablas estilizadas en modo claro ──────────────────────────────── */
+.light-theme table thead,
+.light-theme thead tr {
+  background-color: #eee9dc !important;
+  border-bottom: 2px solid #ded5c4 !important;
+}
+
+.light-theme table thead th {
+  color: #6a4e17 !important;
+}
+
+.light-theme table tbody tr:hover {
+  background-color: rgba(200, 170, 110, 0.08) !important;
+}
+
+/* ── 8. Formularios, inputs, selects y textareas ──────────────────────── */
+.light-theme input,
+.light-theme select,
+.light-theme textarea {
+  background-color: #ffffff !important;
+  color: #16191d !important;
+  border-color: #dcd4c5 !important;
+}
+
+.light-theme input:focus,
+.light-theme select:focus,
+.light-theme textarea:focus {
+  border-color: #8c6820 !important;
+  box-shadow: 0 0 10px rgba(140, 104, 32, 0.2) !important;
+}
+
+.light-theme input::placeholder,
+.light-theme textarea::placeholder {
+  color: #8c97a8 !important;
+}
+
+.light-theme select option {
+  background-color: #ffffff !important;
+  color: #16191d !important;
+}
+
+/* ── 9. Modales y Backdrops en tema claro ────────────────────────────── */
+.light-theme .fixed.inset-0[class*="bg-[#0a0a0c]"],
+.light-theme .fixed.inset-0.bg-black\/70 {
+  background-color: rgba(20, 24, 30, 0.45) !important;
+  backdrop-filter: blur(6px) !important;
+}
+
+/* ── 10. Gráficos Recharts en tema claro ──────────────────────────────── */
+.light-theme .recharts-cartesian-grid line {
+  stroke: #e2dbce !important;
+}
+
+.light-theme .recharts-text {
+  fill: #556274 !important;
+}
+
+.light-theme .recharts-default-tooltip {
+  background-color: #ffffff !important;
+  border-color: #c8aa6e !important;
+  color: #16191d !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ── 11. Scrollbar y date-picker en tema claro ────────────────────────── */
+.light-theme ::-webkit-scrollbar-thumb {
+  background-color: rgba(180, 160, 130, 0.4) !important;
+}
+
+.light-theme ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(140, 110, 70, 0.7) !important;
+}
+
+.light-theme input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.2) !important;
 }

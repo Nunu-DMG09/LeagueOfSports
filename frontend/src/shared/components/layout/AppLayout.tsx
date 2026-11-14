@@ -10,13 +10,26 @@ import { useAuth } from '../../hooks/useAuth';
 export default function AppLayout() {
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('theme') !== 'light';
+  });
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   
   const location = useLocation();
   const navigate = useNavigate();
 
   const { user: currentUser, canManageTournaments, canManageTeams } = useAuth();
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      document.documentElement.classList.add('light-theme');
+      setIsDarkMode(false);
+    } else {
+      document.documentElement.classList.remove('light-theme');
+      setIsDarkMode(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (window.innerWidth < 1024) setIsSidebarOpen(false);
@@ -31,11 +44,35 @@ export default function AppLayout() {
   };
 
   const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('light-theme');
+    setIsDarkMode(prev => {
+      const next = !prev;
+      if (next) {
+        document.documentElement.classList.remove('light-theme');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.documentElement.classList.add('light-theme');
+        localStorage.setItem('theme', 'light');
+      }
+      return next;
+    });
   };
 
   const isAdminOrSuperAdmin = currentUser?.id_rol === 2 || currentUser?.id_rol === 3;
+
+  // Título dinámico por ruta
+  const pageTitles: Record<string, string> = {
+    '/dashboard': 'Centro de Comando',
+    '/tournaments': 'Torneos',
+    '/tournaments/new': 'Nueva Competencia',
+    '/teams': 'Equipos',
+    '/teams/new': 'Nuevo Equipo',
+    '/users': 'Invocadores',
+    '/users/new': 'Nuevo Invocador',
+    '/hall-of-fame': 'Salón de la Meta',
+    '/rewards': 'Bóveda del Artesano',
+    '/summoner-points': 'Reparto de Gloria',
+  };
+  const currentTitle = pageTitles[location.pathname] ?? 'Panel de Mando';
 
   const navItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
@@ -67,7 +104,7 @@ export default function AppLayout() {
   const roleNames: Record<number, string> = { 1: 'Usuario', 2: 'Admin', 3: 'Super Admin' };
 
   return (
-    <div className={`flex h-screen w-full overflow-hidden transition-colors duration-300 relative ${isDarkMode ? 'bg-[#0a0a0c] text-white' : 'bg-[#f0e6d2] text-[#121418]'}`}>
+    <div className={`flex h-screen w-full overflow-hidden transition-colors duration-300 relative ${isDarkMode ? 'bg-[#0a0a0c] text-white' : 'bg-[#f6f4ed] text-[#16191d]'}`}>
    
       {isDarkMode && <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-ls-primary/5 via-transparent to-transparent pointer-events-none z-0"></div>}
       
@@ -80,7 +117,7 @@ export default function AppLayout() {
       />
 
      
-      <aside className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r transition-all duration-300 ease-in-out lg:relative ${isDarkMode ? 'bg-[#121418]/90 backdrop-blur-2xl border-gray-800/60 shadow-[5px_0_30px_rgba(0,0,0,0.5)]' : 'bg-white shadow-xl border-gray-200'} ${
+      <aside className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r transition-all duration-300 ease-in-out lg:relative ${isDarkMode ? 'bg-[#121418]/90 backdrop-blur-2xl border-gray-800/60 shadow-[5px_0_30px_rgba(0,0,0,0.5)]' : 'bg-[#ffffff] shadow-xl border-[#e2dbce]'} ${
         isSidebarOpen ? 'translate-x-0 w-72' : '-translate-x-full w-72 lg:translate-x-0 lg:w-24'
       }`}>
         
@@ -178,7 +215,7 @@ export default function AppLayout() {
       <main className="flex flex-1 flex-col overflow-hidden w-full relative z-10">
         
        
-        <header className={`flex h-20 lg:h-24 shrink-0 items-center justify-between border-b px-4 lg:px-8 transition-colors z-20 shadow-md ${isDarkMode ? 'bg-[#121418]/80 backdrop-blur-xl border-gray-800/60' : 'bg-white border-gray-200'}`}>
+        <header className={`flex h-20 lg:h-24 shrink-0 items-center justify-between border-b px-4 lg:px-8 transition-colors z-20 shadow-md ${isDarkMode ? 'bg-[#121418]/80 backdrop-blur-xl border-gray-800/60' : 'bg-[#ffffff] border-[#e2dbce]'}`}>
           <div className="flex items-center gap-3 lg:gap-6">
             <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden text-[#a0aec0] hover:text-[#0bc6e3] p-1 transition-colors">
               <Menu size={28} />
@@ -186,7 +223,7 @@ export default function AppLayout() {
             
             <div className="flex flex-col justify-center">
               <h2 className="text-lg lg:text-xl font-black uppercase tracking-widest text-[#c8aa6e] drop-shadow-[0_0_5px_rgba(200,170,110,0.5)]">
-                Panel de Mando
+                {currentTitle}
               </h2>
               <p className="hidden sm:inline-flex text-xs lg:text-sm font-bold uppercase tracking-widest text-[#a0aec0] mt-1 items-center gap-2">
                 Bienvenido invocador <span className="text-white text-sm lg:text-base drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">{currentUser?.nickname || 'Desconocido'}</span>
@@ -209,7 +246,7 @@ export default function AppLayout() {
               </button>
 
               <div className={`absolute right-0 mt-5 w-72 lg:w-80 rounded-xl border shadow-2xl z-50 overflow-hidden transition-all duration-300 origin-top-right ${
-                isDarkMode ? 'bg-[#121418]/95 backdrop-blur-xl border-[#c8aa6e]/30 shadow-[0_15px_40px_rgba(0,0,0,0.8)]' : 'bg-white border-gray-200'
+                isDarkMode ? 'bg-[#121418]/95 backdrop-blur-xl border-[#c8aa6e]/30 shadow-[0_15px_40px_rgba(0,0,0,0.8)]' : 'bg-[#ffffff] border-[#e2dbce]'
               } ${isProfileOpen ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible'}`}>
                 <div className="p-5 border-b border-gray-800/60 bg-gradient-to-br from-gray-800/40 to-transparent relative">
                   <p className="font-black text-xl lg:text-2xl text-white uppercase tracking-wider drop-shadow-sm">{currentUser?.nickname}</p>
@@ -242,7 +279,9 @@ export default function AppLayout() {
 
       
         <div className="flex-1 overflow-y-auto p-4 lg:p-8 relative z-0 custom-scrollbar" onClick={() => isProfileOpen && setIsProfileOpen(false)}>
-          <Outlet />
+          <div key={location.pathname} className="page-enter h-full">
+            <Outlet />
+          </div>
         </div>
       </main>
     </div>

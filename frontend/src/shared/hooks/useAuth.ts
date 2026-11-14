@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 export function useAuth() {
 
-  const [user, setUser] = useState<any>(() => {
+  const [user] = useState<any>(() => {
     const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
