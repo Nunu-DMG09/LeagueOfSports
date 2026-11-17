@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Trophy, Zap, LogIn, Medal, Crown, Star, ArrowRight,
+  Trophy, Zap, LogIn, Medal, Crown, Star,
   Sun, Moon, AlertCircle, RefreshCw
 } from 'lucide-react';
 import { api } from '../../../shared/services/api';
